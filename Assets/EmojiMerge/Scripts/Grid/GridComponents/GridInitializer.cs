@@ -11,9 +11,12 @@ public class GridInitializer : MonoBehaviour
             for (int y = 0; y < gridSize.y; y++)
             {
                 Vector3 cellPosition = grid.GetCellCenterLocal(new Vector3Int(x, y, 0));
-                GameObject cell = Instantiate(cellPrefab, grid.transform);
-                cell.transform.localPosition = cellPosition;
-                cell.name = $"Cell ({x}, {y})";
+                GameObject cellObject = Instantiate(cellPrefab, grid.transform);
+                cellObject.transform.localPosition = cellPosition;
+                cellObject.name = $"Cell ({x}, {y})";
+                Cell cell = cellObject.GetComponent<Cell>();
+                cell.Initialize(new Vector2Int(x, y));
+                GridManager.Instance.Cells.Add(new Vector2Int(x, y), cell);
             }
         }
     }

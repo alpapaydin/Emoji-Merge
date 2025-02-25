@@ -374,10 +374,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 1509432004}
-  gridSize: {x: 9, y: 9}
+  gridSize: {x: 8, y: 10}
   gridInitializer: {fileID: 1509432006}
-  gridPadding: 0.5
-  inputManager: {fileID: 1509432007}
+  gridStyling: {fileID: 1509432007}
+  gridPadding: 1
 --- !u!156049354 &1509432004
 Grid:
   m_ObjectHideFlags: 0
@@ -387,7 +387,7 @@ Grid:
   m_GameObject: {fileID: 1509432002}
   m_Enabled: 1
   m_CellSize: {x: 1, y: 1, z: 0}
-  m_CellGap: {x: 0.1, y: 0.1, z: 0}
+  m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
 --- !u!4 &1509432005
@@ -427,10 +427,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1509432002}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b442dc41b7f74942b626f780a09c949, type: 3}
+  m_Script: {fileID: 11500000, guid: 29861bd44644b934d9c2055e54ba929a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 1509432004}
+  backgroundSprite: {fileID: 21300000, guid: b6b1bd2ae33e8b042a3f0f29e95ca585, type: 3}
+  backgroundPadding: 1
+  cellColor1: {r: 1, g: 1, b: 1, a: 0.32941177}
+  cellColor2: {r: 0.9, g: 0.9, b: 0.9, a: 1}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

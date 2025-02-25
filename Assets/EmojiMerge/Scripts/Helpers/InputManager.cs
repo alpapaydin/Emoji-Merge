@@ -1,9 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
+
+    public event Action<Vector2Int> OnTouchStart;
+    public event Action<Vector2Int> OnTouchEnd;
+    public event Action<Vector2> OnTouchDrag;
+
     private Grid grid;
     private Vector2 lastTouchPosition;
     private bool isDragging;
@@ -44,7 +50,7 @@ public class InputManager : MonoBehaviour
     {
         lastTouchPosition = screenPosition;
         isDragging = false;
-        CheckGridPosition(screenPosition, "Tapped");
+        OnTouchStart?.Invoke(GetGridPosition(screenPosition));
     }
 
     private void HandleTouchDrag(Vector2 screenPosition)
@@ -52,7 +58,7 @@ public class InputManager : MonoBehaviour
         if (Vector2.Distance(screenPosition, lastTouchPosition) > 20f)
         {
             isDragging = true;
-            CheckGridPosition(screenPosition, "Dragging over");
+            OnTouchDrag?.Invoke(screenPosition);
         }
         lastTouchPosition = screenPosition;
     }
@@ -61,25 +67,14 @@ public class InputManager : MonoBehaviour
     {
         if (!isDragging)
         {
-            CheckGridPosition(screenPosition, "Released at");
+            OnTouchEnd?.Invoke(GetGridPosition(screenPosition));
         }
     }
 
-    private void CheckGridPosition(Vector2 screenPosition, string actionType)
+    private Vector2Int GetGridPosition(Vector2 screenPosition)
     {
         Vector3 worldPosition = mainCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 0));
         Vector3Int cellPosition = grid.WorldToCell(worldPosition);
-        
-        // Check if the position is within grid bounds
-        if (cellPosition.x >= 0 && cellPosition.x < 9 && cellPosition.y >= 0 && cellPosition.y < 9)
-        {
-            Debug.Log($"{actionType} grid cell at: {cellPosition}");
-            Vector3 cellCenter = grid.GetCellCenterLocal(cellPosition);
-            Debug.Log($"Cell center world position: {cellCenter}");
-        }
-        else
-        {
-            Debug.Log($"{actionType} outside grid: {cellPosition}");
-        }
+        return new Vector2Int(cellPosition.x, cellPosition.y);
     }
 }
