@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e077f6e368742c94c991ec4b61adc915, type: 3}
+  m_Name: ProducedItemProperties
+  m_EditorClassIdentifier: 
+  itemType: 4
+  itemName: Produced
+  levelSprites:
+  - {fileID: 21300000, guid: f084b4cfc2a56cd4f831ca4bc85f1401, type: 3}
+  - {fileID: 21300000, guid: 1580ea5c0df99c843967e5642c044b44, type: 3}
+  - {fileID: 21300000, guid: fc2dbcc071419e34f8d2a5259d0ed5d5, type: 3}
+  - {fileID: 21300000, guid: 9c98e135d7b08fc4fa08a7939d382314, type: 3}
+  - {fileID: 21300000, guid: 4e7b36050d1683a4bbcbca2eba5b5c9e, type: 3}
+  maxLevel: 5

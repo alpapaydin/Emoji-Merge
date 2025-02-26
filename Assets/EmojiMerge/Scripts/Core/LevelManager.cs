@@ -4,15 +4,23 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        GridManager.Instance.OnGridInitialized += OnGridInitialized;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnGridInitialized()
     {
-        
+        SpawnTestItems();
     }
+
+    private void SpawnTestItems()
+    {
+        ItemManager.Instance.CreateProducedItem(new Vector2Int(2, 2), 1);
+        ItemManager.Instance.CreateProducedItem(new Vector2Int(3, 2), 1);
+        ItemManager.Instance.CreateProducedItem(new Vector2Int(4, 2), 1);
+        ItemManager.Instance.CreateProducedItem(new Vector2Int(2, 3), 2);
+        ItemManager.Instance.CreateProducedItem(new Vector2Int(3, 3), 2);
+    }
+
 }

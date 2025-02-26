@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5e26c9af5482c64e804d4731b351b43, type: 3}
+  m_Name: ProducerItemProperties
+  m_EditorClassIdentifier: 
+  itemType: 0
+  itemName: Producer
+  levelSprites:
+  - {fileID: 21300000, guid: d7621effb44ddb644a0e65f18a2d3f17, type: 3}
+  - {fileID: 21300000, guid: f66d7d9e638195f4c88ec5bb96f10c1a, type: 3}
+  - {fileID: 21300000, guid: 25beb2b77e2c73347b2656e3e166e4a6, type: 3}
+  - {fileID: 21300000, guid: 758bd8052cfa4564493b258ffa2ae425, type: 3}
+  - {fileID: 21300000, guid: a8e3ad7443d6a0e40903a96849487444, type: 3}
+  maxLevel: 5
+  energyCost: 1
+  levels:
+  - rechargeTime: 0
+    itemCapacities: []
+    canProduce: 0
+  - rechargeTime: 0
+    itemCapacities: []
+    canProduce: 0
+  - rechargeTime: 0
+    itemCapacities: []
+    canProduce: 0
+  - rechargeTime: 10
+    itemCapacities:
+    - level: 1
+      count: 10
+    canProduce: 1
+  - rechargeTime: 20
+    itemCapacities:
+    - level: 1
+      count: 10
+    - level: 2
+      count: 10
+    canProduce: 1

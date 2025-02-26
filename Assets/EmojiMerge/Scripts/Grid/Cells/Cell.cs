@@ -17,11 +17,6 @@ public class Cell : MonoBehaviour
         ApplyStyling();
     }
 
-    public void OnTapped()
-    {
-        Debug.Log($"Cell at {gridPosition} was tapped!");
-    }
-
     private void ApplyStyling()
     {
         if (GridManager.Instance != null && GridManager.Instance.Styling != null)
