@@ -18,10 +18,26 @@ public class ItemDetailsUI : MonoBehaviour
         rootElement.Q<VisualElement>("ItemIcon").style.backgroundImage = 
             new StyleBackground(item.properties.levelSprites[item.CurrentLevel - 1]);
         rootElement.style.scale = new StyleScale(new Scale(new Vector2(1f, 1f)));
+
+        if (item is ProducerItem producerItem)
+            ShowProducerStats(producerItem);
+
+        if (item is ChestItem chestItem)
+            ShowChestStats(chestItem);
+
     }
 
     public void Hide()
     {
         rootElement.style.scale = new StyleScale(new Scale(new Vector2(1f, 0f)));
     }
+
+    private void ShowProducerStats(ProducerItem item) 
+    {
+        // show contained items and progress bar
+        VisualElement itemContainer = rootElement.Q<VisualElement>("ContainedItems");
+    }
+
+    private void ShowChestStats(ChestItem item)
+    {}
 }
