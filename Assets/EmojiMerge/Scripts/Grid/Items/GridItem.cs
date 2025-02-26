@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class GridItem : MonoBehaviour
@@ -30,6 +31,39 @@ public class GridItem : MonoBehaviour
     protected virtual void Start()
     {
         UpdateVisuals();
+        
+        if (GetComponent<ItemAnimator>() == null)
+        {
+            Vector3 targetScale = transform.localScale;
+            transform.localScale = Vector3.zero;
+            StartCoroutine(InitialScaleAnimation(targetScale));
+        }
+    }
+
+    private IEnumerator InitialScaleAnimation(Vector3 targetScale)
+    {
+        float duration = 0.3f;
+        float bounceScale = 1.2f;
+
+        yield return StartCoroutine(ScaleWithEase(Vector3.zero, targetScale * bounceScale, duration * 0.4f));
+        
+        yield return StartCoroutine(ScaleWithEase(targetScale * bounceScale, targetScale, duration * 0.6f));
+    }
+
+    private IEnumerator ScaleWithEase(Vector3 start, Vector3 end, float duration)
+    {
+        float elapsed = 0;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            
+            t = t * t * (3f - 2f * t);
+            
+            transform.localScale = Vector3.Lerp(start, end, t);
+            yield return null;
+        }
+        transform.localScale = end;
     }
 
     public virtual void Initialize(BaseItemProperties props, int level = 1)
@@ -62,7 +96,10 @@ public class GridItem : MonoBehaviour
         }
     }
 
-    public virtual void OnTapped() { }
+    public virtual void OnTapped() 
+    { 
+        UIManager.Instance.OpenItemDetailsPane(this);
+    }
 
     public virtual bool CanPerformAction()
     {

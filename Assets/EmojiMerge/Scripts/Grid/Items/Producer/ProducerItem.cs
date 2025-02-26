@@ -72,6 +72,7 @@ public class ProducerItem : GridItem
 
     public override void OnTapped()
     {
+        base.OnTapped();
         if (!CanPerformAction()) return;
 
         GameManager.Instance.ConsumeEnergy(ProducerProperties.energyCost);
@@ -111,7 +112,12 @@ public class ProducerItem : GridItem
         {
             var selectedCapacity = availableSlots[Random.Range(0, availableSlots.Count)];
             
-            GridItem newItem = ItemManager.Instance.CreateProducedItem(gridPosition, selectedCapacity.level);
+            GridItem newItem = ItemManager.Instance.CreateProducedItemWithAnimation(
+                gridPosition, 
+                selectedCapacity.level,
+                transform.position
+            );
+
             if (newItem != null)
             {
                 inventoryItemCounts[selectedCapacity.level]--;

@@ -29,6 +29,7 @@ public class ChestItem : GridItem
 
     public override void OnTapped()
     {
+        base.OnTapped();
         if (isLocked) return;
         
         SpawnContainedItems();

@@ -1,0 +1,43 @@
+.ItemDetailText {
+    background-color: rgba(255, 255, 255, 0);
+    color: rgb(255, 255, 255);
+    -unity-text-outline-color: rgb(0, 0, 0);
+    -unity-text-outline-width: 1px;
+    text-shadow: 15px 15px 1px rgb(0, 0, 0);
+    font-size: 24px;
+}
+
+.unity-progress-bar__progress {
+    background-image: url("project://database/Assets/EmojiMerge/Assets/Image/UI/ScrollBar_Orange_Base.png?fileID=21300000&guid=55708d06854687f4b860e332661f14f6&type=3#ScrollBar_Orange_Base");
+    background-color: rgba(0, 0, 0, 0);
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-left: 0;
+    -unity-slice-right: 0;
+    -unity-slice-bottom: 0;
+    -unity-slice-top: 0;
+    -unity-slice-scale: 0.1px;
+}
+
+.unity-progress-bar__background {
+    background-image: url("project://database/Assets/EmojiMerge/Assets/Image/UI/ScrollBar_Blank_Base.png?fileID=21300000&guid=9053a05558a11e94e94da790221bba53&type=3#ScrollBar_Blank_Base");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    background-color: rgba(0, 0, 0, 0);
+    border-left-color: rgba(255, 255, 255, 0);
+    border-right-color: rgba(255, 255, 255, 0);
+    border-top-color: rgba(255, 255, 255, 0);
+    border-bottom-color: rgba(255, 255, 255, 0);
+    -unity-slice-left: 0;
+    -unity-slice-top: 0;
+    -unity-slice-right: 0;
+    -unity-slice-bottom: 0;
+    -unity-slice-scale: 0.1px;
+}
+
+.unity-progress-bar__container {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+}

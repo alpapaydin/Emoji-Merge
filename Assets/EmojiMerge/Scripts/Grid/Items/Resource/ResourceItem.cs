@@ -24,6 +24,7 @@ public class ResourceItem : GridItem
 
     public override void OnTapped()
     {
+        base.OnTapped();
         if (!CanPerformAction()) return;
 
         switch (properties.itemType)
@@ -32,7 +33,7 @@ public class ResourceItem : GridItem
                 GameManager.Instance.AddEnergy(ResourceProperties.resourceAmounts[currentLevel - 1]);
                 break;
             case ItemType.Coin:
-                GameManager.Instance.AddCoins(ResourceProperties.resourceAmounts[currentLevel - 1]);
+                GameManager.Instance.AddCoins(Mathf.RoundToInt(ResourceProperties.resourceAmounts[currentLevel - 1]));
                 break;
         }
 

@@ -3,18 +3,18 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ResourceItemProperties", menuName = "Game/Items/Resource Properties")]
 public class ResourceItemProperties : BaseItemProperties
 {
-    public int[] resourceAmounts; 
-
+    public float[] resourceAmounts;
+    
     private void OnEnable()
     {
         maxLevel = 3;
-    }
-
-    private void OnValidate()
-    {
         if (resourceAmounts == null || resourceAmounts.Length != maxLevel)
         {
-            resourceAmounts = new int[maxLevel];
+            resourceAmounts = new float[maxLevel];
+            for (int i = 0; i < maxLevel; i++)
+            {
+                resourceAmounts[i] = (i + 1) * 10f;
+            }
         }
     }
 }

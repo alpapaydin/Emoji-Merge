@@ -57,8 +57,10 @@ public class ItemManager : MonoBehaviour
         }
 
         GameObject itemObj = Instantiate(gridItemPrefab, itemsContainer.transform);
-        itemObj.transform.localScale *= GridManager.Instance.GridScaleMultiplier;
         itemObj.name = name;
+        
+        itemObj.transform.localScale *= GridManager.Instance.GridScaleMultiplier;
+        
         return itemObj;
     }
 
@@ -79,6 +81,34 @@ public class ItemManager : MonoBehaviour
             var cell = GridManager.Instance.Cells[emptyPos.Value];
             cell.SetItem(item);
             item.SetGridPosition(emptyPos.Value, cell);
+            return item;
+        }
+        
+        Destroy(itemObj);
+        return null;
+    }
+
+    public GridItem CreateProducedItemWithAnimation(Vector2Int gridPosition, int level, Vector3 startPosition)
+    {
+        var emptyPos = GridManager.Instance.FindNearestEmptyCell(gridPosition);
+        if (!emptyPos.HasValue || !GridManager.Instance.Cells.ContainsKey(emptyPos.Value)) 
+            return null;
+
+        GameObject itemObj = CreateGridItemBase("Produced Item");
+        if (itemObj == null) return null;
+
+        ProducedItem item = itemObj.AddComponent<ProducedItem>();
+        ItemAnimator animator = itemObj.AddComponent<ItemAnimator>();
+        item.Initialize(producedItemProperties, level);
+        
+        if (GridManager.Instance.TryPlaceItemInCell(emptyPos.Value, item))
+        {
+            var cell = GridManager.Instance.Cells[emptyPos.Value];
+            cell.SetItem(item);
+            item.SetGridPosition(emptyPos.Value, cell);
+            
+            animator.AnimateProduction(startPosition, cell.transform.position);
+            
             return item;
         }
         

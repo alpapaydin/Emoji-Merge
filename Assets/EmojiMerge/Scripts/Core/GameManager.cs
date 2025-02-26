@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
         currentEnergy = maxEnergy;
         currentCoins = 0;
         lastEnergyRechargeTime = Time.time;
+        UpdateUIEnergy();
+        UpdateUICoins();
     }
 
     private void Update()
@@ -44,33 +46,43 @@ public class GameManager : MonoBehaviour
             float timeSinceLastRecharge = Time.time - lastEnergyRechargeTime;
             if (timeSinceLastRecharge >= energyRechargeTime)
             {
-                int energyToAdd = Mathf.FloorToInt(timeSinceLastRecharge / energyRechargeTime);
-                currentEnergy = Mathf.Min(maxEnergy, currentEnergy + energyToAdd);
+                float energyToAdd = timeSinceLastRecharge / energyRechargeTime;
+                AddEnergy(energyToAdd);
                 lastEnergyRechargeTime = Time.time;
             }
         }
     }
 
-    public bool HasEnoughEnergy(int amount)
+    public bool HasEnoughEnergy(float amount)
     {
         return currentEnergy >= amount;
     }
 
-    public void ConsumeEnergy(int amount)
+    public void ConsumeEnergy(float amount)
     {
-        if (HasEnoughEnergy(amount))
-        {
-            currentEnergy -= amount;
-        }
+        currentEnergy = Mathf.Max(0f, currentEnergy - amount);
+        UpdateUIEnergy();
     }
 
-    public void AddEnergy(int amount)
+    public void AddEnergy(float amount)
     {
         currentEnergy = Mathf.Min(maxEnergy, currentEnergy + amount);
+        UpdateUIEnergy();
     }
 
     public void AddCoins(int amount)
     {
         currentCoins += amount;
+        UpdateUICoins();
+    }
+
+    private void UpdateUIEnergy()
+    {
+        UIManager.Instance.UpdateEnergy(Mathf.RoundToInt(currentEnergy));
+    }
+
+    private void UpdateUICoins()
+    {
+        UIManager.Instance.UpdateGold(currentCoins);
     }
 }

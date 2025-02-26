@@ -85,6 +85,9 @@ public class GridManager : MonoBehaviour
         {
             var item = GetItemAtCell(position);
             item?.OnTapped();
+        } else
+        {
+            UIManager.Instance.CloseItemDetailsPane();
         }
     }
 

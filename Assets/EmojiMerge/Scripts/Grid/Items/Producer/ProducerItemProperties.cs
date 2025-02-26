@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ProducerItemProperties", menuName = "Game/Items/Producer Properties")]
 public class ProducerItemProperties : BaseItemProperties
 {
-    public int energyCost;
+    public float energyCost;
     public ProducerLevel[] levels = new ProducerLevel[5];
     
     private void OnEnable()
