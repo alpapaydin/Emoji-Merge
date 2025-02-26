@@ -604,6 +604,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1964343484}
   - component: {fileID: 1964343483}
+  - component: {fileID: 1964343485}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -642,6 +643,47 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1964343485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1964343482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33aaa1c81fae85043946003beae7bfb6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: merge
+    clip: {fileID: 0}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: tapItem
+    clip: {fileID: 0}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: getEnergy
+    clip: {fileID: 0}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: getMoney
+    clip: {fileID: 0}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  poolSize: 10
+  masterVolume: 1
+  sfxVolume: 1
+  uiVolume: 1
 --- !u!1 &2029428095
 GameObject:
   m_ObjectHideFlags: 0
