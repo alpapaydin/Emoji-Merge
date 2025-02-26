@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 public class ProducerItem : GridItem
 {
-    private bool isReadyToProduce = false;
-    private Dictionary<int, int> producedItemCounts = new Dictionary<int, int>();
+    private bool isReadyToProduce = true;
+    private Dictionary<int, int> inventoryItemCounts = new Dictionary<int, int>();
     private bool isRecharging = false;
     private float rechargeProgress = 0f;
     
@@ -20,46 +20,54 @@ public class ProducerItem : GridItem
         }
 
         base.Initialize(props, level);
-        InitializeProducedItems();
+        InitializeInventory();
         
+        isReadyToMerge = currentLevel < props.maxLevel;
+        isReadyToProduce = true;
+
         if (CurrentLevelData.canProduce)
         {
-            StartRecharge();
+            FillInventory();
         }
     }
 
-    private void InitializeProducedItems()
+    private void InitializeInventory()
     {
-        producedItemCounts.Clear();
-        foreach (var capacity in CurrentLevelData.itemCapacities)
+        inventoryItemCounts.Clear();
+        if (CurrentLevelData.itemCapacities != null)
         {
-            producedItemCounts[capacity.level] = 0;
+            foreach (var capacity in CurrentLevelData.itemCapacities)
+            {
+                inventoryItemCounts[capacity.level] = 0;
+            }
         }
     }
 
     public override bool CanPerformAction()
     {
-        if (!CurrentLevelData.canProduce) return false;
-        // also check grid capacity for items
-        // check if we have capacity for any item level
-        bool hasCapacity = false;
-        foreach (var capacity in CurrentLevelData.itemCapacities)
+        if (InputManager.IsDragging)
+            return false;
+            
+        if (CurrentLevelData.canProduce)
         {
-            if (producedItemCounts.TryGetValue(capacity.level, out int count))
+            bool hasItems = false;
+            foreach (var count in inventoryItemCounts.Values)
             {
-                if (count < capacity.count)
+                if (count > 0)
                 {
-                    hasCapacity = true;
+                    hasItems = true;
                     break;
                 }
             }
+            if (!hasItems) return false;
+            
+            if (!GameManager.Instance.HasEnoughEnergy(ProducerProperties.energyCost)) 
+                return false;
+                
+            return isReadyToProduce;
         }
-        if (!hasCapacity) return false;
         
-        // check if we have enough energy
-        if (!GameManager.Instance.HasEnoughEnergy(ProducerProperties.energyCost)) return false;
-        
-        return isReadyToProduce && !isRecharging;
+        return false;
     }
 
     public override void OnTapped()
@@ -67,40 +75,63 @@ public class ProducerItem : GridItem
         if (!CanPerformAction()) return;
 
         GameManager.Instance.ConsumeEnergy(ProducerProperties.energyCost);
-        ProduceItem();
+        SpawnOneItemFromInventory();
         
-        StartRecharge();
+        if (HasEmptyInventorySlots())
+        {
+            StartRecharge();
+        }
     }
 
-    private void ProduceItem()
+    private bool HasEmptyInventorySlots()
     {
-        List<ProducerItemCapacity> availableSlots = new List<ProducerItemCapacity>();
         foreach (var capacity in CurrentLevelData.itemCapacities)
         {
-            if (producedItemCounts[capacity.level] < capacity.count)
+            if (inventoryItemCounts[capacity.level] < capacity.count)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void SpawnOneItemFromInventory()
+    {
+        List<ProducerItemCapacity> availableSlots = new List<ProducerItemCapacity>();
+        
+        foreach (var capacity in CurrentLevelData.itemCapacities)
+        {
+            if (inventoryItemCounts[capacity.level] > 0)
             {
                 availableSlots.Add(capacity);
             }
         }
 
-        if (availableSlots.Count == 0) return;
-
-        // randomly select one of the available slots
-        var selectedCapacity = availableSlots[Random.Range(0, availableSlots.Count)];
-        
-        GridItem newItem = ItemManager.Instance.CreateProducedItem(gridPosition, selectedCapacity.level);
-        
-        if (newItem != null)
+        if (availableSlots.Count > 0)
         {
-            // grid capacity checking by trial and error
-            producedItemCounts[selectedCapacity.level]++;
+            var selectedCapacity = availableSlots[Random.Range(0, availableSlots.Count)];
+            
+            GridItem newItem = ItemManager.Instance.CreateProducedItem(gridPosition, selectedCapacity.level);
+            if (newItem != null)
+            {
+                inventoryItemCounts[selectedCapacity.level]--;
+                
+                if (!isRecharging && HasEmptyInventorySlots())
+                {
+                    StartRecharge();
+                }
+            }
         }
     }
 
     private void StartRecharge()
     {
-        isRecharging = true;
-        rechargeProgress = 0f;
+        if (!isRecharging)
+        {
+            isRecharging = true;
+            rechargeProgress = 0f;
+            ShowParticleEffect("recharge_start");
+        }
     }
 
     private void UpdateRecharge()
@@ -119,9 +150,32 @@ public class ProducerItem : GridItem
     {
         isRecharging = false;
         rechargeProgress = 0f;
-        isReadyToProduce = true;
-        InitializeProducedItems();
+        FillInventory();
         ShowParticleEffect("ready");
+    }
+
+    private void FillInventory()
+    {
+        bool inventoryChanged = false;
+        
+        foreach (var capacity in CurrentLevelData.itemCapacities)
+        {
+            int currentCount = inventoryItemCounts[capacity.level];
+            if (currentCount < capacity.count)
+            {
+                inventoryItemCounts[capacity.level] = capacity.count;
+                inventoryChanged = true;
+            }
+        }
+
+        if (HasEmptyInventorySlots())
+        {
+            StartRecharge();
+        }
+        else if (inventoryChanged)
+        {
+            ShowParticleEffect("ready");
+        }
     }
 
     private void Update()

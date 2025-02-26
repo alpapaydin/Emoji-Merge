@@ -29,7 +29,8 @@ public class ProducerItemProperties : BaseItemProperties
             levels[i] = new ProducerLevel 
             { 
                 canProduce = false,
-                itemCapacities = new ProducerItemCapacity[0]
+                itemCapacities = new ProducerItemCapacity[0],
+                rechargeTime = 0f
             };
         }
 
@@ -39,18 +40,18 @@ public class ProducerItemProperties : BaseItemProperties
             rechargeTime = 10f,
             itemCapacities = new ProducerItemCapacity[]
             {
-                new ProducerItemCapacity { level = 1, count = 10 }
+                new ProducerItemCapacity { level = 1, count = 5 }
             }
         };
 
         levels[4] = new ProducerLevel
         {
             canProduce = true,
-            rechargeTime = 20f,
+            rechargeTime = 15f,
             itemCapacities = new ProducerItemCapacity[]
             {
-                new ProducerItemCapacity { level = 1, count = 10 },
-                new ProducerItemCapacity { level = 2, count = 10 }
+                new ProducerItemCapacity { level = 1, count = 5 },
+                new ProducerItemCapacity { level = 2, count = 3 }
             }
         };
     }

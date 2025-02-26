@@ -19,11 +19,12 @@ public class InputManager : MonoBehaviour
     private bool isDragging;
     private Camera mainCamera;
 
-    // Drag and drop state
     private GridItem draggedItem;
     private SpriteRenderer dragPreview;
     private Vector2Int dragStartGridPos;
     private GridItem currentHoverTarget;
+
+    public static bool IsDragging { get; private set; }
 
     public void Initialize(Grid targetGrid)
     {
@@ -72,91 +73,86 @@ public class InputManager : MonoBehaviour
         isDragging = false;
         dragStartGridPos = GetGridPosition(screenPosition);
 
-        var item = GridManager.Instance.GetItemAtCell(dragStartGridPos);
+        TryStartDraggingItem(dragStartGridPos);
+        OnTouchStart?.Invoke(dragStartGridPos);
+    }
+
+    private void TryStartDraggingItem(Vector2Int gridPosition)
+    {
+        var item = GridManager.Instance.GetItemAtCell(gridPosition);
         if (item != null && item.IsReadyToMerge)
         {
             draggedItem = item;
-            dragPreview.sprite = item.GetComponent<SpriteRenderer>().sprite;
-            dragPreview.transform.position = item.transform.position;
-            dragPreview.transform.localScale = item.transform.localScale;
-            dragPreview.gameObject.SetActive(true);
-            
-            var itemRenderer = item.GetComponent<SpriteRenderer>();
-            itemRenderer.color = new Color(1, 1, 1, 0.5f);
+            SetupDragPreview(item);
+            SetItemDragVisuals(item, true);
         }
+    }
 
-        OnTouchStart?.Invoke(dragStartGridPos);
+    private void SetupDragPreview(GridItem item)
+    {
+        dragPreview.sprite = item.GetComponent<SpriteRenderer>().sprite;
+        dragPreview.transform.position = item.transform.position;
+        dragPreview.transform.localScale = item.transform.localScale;
+        dragPreview.gameObject.SetActive(true);
+    }
+
+    private void SetItemDragVisuals(GridItem item, bool isDragging)
+    {
+        var itemRenderer = item.GetComponent<SpriteRenderer>();
+        itemRenderer.color = isDragging ? new Color(1, 1, 1, 0.5f) : Color.white;
     }
 
     private void HandleTouchDrag(Vector2 screenPosition)
     {
-        if (Vector2.Distance(screenPosition, lastTouchPosition) > dragThreshold || isDragging)
+        if (!IsDragThresholdExceeded(screenPosition) && !isDragging)
+            return;
+
+        isDragging = true;
+        IsDragging = true;
+        
+        if (draggedItem != null)
         {
-            isDragging = true;
-
-            if (draggedItem != null)
-            {
-                Vector3 worldPos = mainCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 
-                    -mainCamera.transform.position.z + draggedItem.transform.position.z));
-                dragPreview.transform.position = worldPos;
-
-                Vector2Int currentGridPos = GetGridPosition(screenPosition);
-                UpdateMergeTarget(currentGridPos);
-            }
-
-            OnTouchDrag?.Invoke(screenPosition);
+            UpdateDragPreviewPosition(screenPosition);
+            UpdateMergeTarget(GetGridPosition(screenPosition));
         }
+
+        OnTouchDrag?.Invoke(screenPosition);
         lastTouchPosition = screenPosition;
+    }
+
+    private bool IsDragThresholdExceeded(Vector2 screenPosition)
+    {
+        return Vector2.Distance(screenPosition, lastTouchPosition) > dragThreshold;
+    }
+
+    private void UpdateDragPreviewPosition(Vector2 screenPosition)
+    {
+        Vector3 worldPos = mainCamera.ScreenToWorldPoint(new Vector3(
+            screenPosition.x, 
+            screenPosition.y, 
+            -mainCamera.transform.position.z + draggedItem.transform.position.z
+        ));
+        dragPreview.transform.position = worldPos;
     }
 
     private void HandleTouchEnd(Vector2 screenPosition)
     {
-        //rework
         Vector2Int endGridPos = GetGridPosition(screenPosition);
 
         if (draggedItem != null)
         {
-            var itemRenderer = draggedItem.GetComponent<SpriteRenderer>();
-            itemRenderer.color = Color.white;
+            SetItemDragVisuals(draggedItem, false);
 
             if (isDragging && currentHoverTarget != null)
             {
-                if (draggedItem.CanMerge(currentHoverTarget))
-                {
-                    Vector2Int pos1 = draggedItem.GridPosition;
-                    Vector2Int pos2 = currentHoverTarget.GridPosition;
-                    Vector2Int mergePos = pos2;
-
-                    if (endGridPos.x >= 0 && endGridPos.x < GridManager.Instance.GridSize.x &&
-                        endGridPos.y >= 0 && endGridPos.y < GridManager.Instance.GridSize.y &&
-                        GridManager.Instance.Cells.ContainsKey(endGridPos))
-                    {
-                        mergePos = endGridPos;
-                    }
-                    
-                    GridManager.Instance.ClearCell(pos1);
-                    GridManager.Instance.ClearCell(pos2);
-
-                    GridItem mergedItem = draggedItem.MergeWith(currentHoverTarget, mergePos);
-                    
-                    if (mergedItem != null)
-                    {
-                        Destroy(draggedItem.gameObject);
-                        Destroy(currentHoverTarget.gameObject);
-                    }
-                    else
-                    {
-                        // restore the cells on fail
-                        GridManager.Instance.TryPlaceItemInCell(pos1, draggedItem);
-                        GridManager.Instance.TryPlaceItemInCell(pos2, currentHoverTarget);
-                    }
-                }
+                HandleDraggedItemRelease(endGridPos);
+            }
+            else
+            {
+                ReturnDraggedItemToOriginalPosition();
             }
 
-            dragPreview.gameObject.SetActive(false);
-            ClearMergeHighlight();
-            draggedItem = null;
-            currentHoverTarget = null;
+            CleanupDragState();
         }
 
         if (!isDragging)
@@ -165,6 +161,51 @@ public class InputManager : MonoBehaviour
         }
 
         isDragging = false;
+        IsDragging = false;
+    }
+
+    private void HandleDraggedItemRelease(Vector2Int endGridPos)
+    {
+        if (draggedItem.CanMerge(currentHoverTarget))
+        {
+            Vector2Int mergePos = GetValidMergePosition(endGridPos);
+            MergeManager.Instance.PerformMerge(draggedItem, currentHoverTarget, mergePos);
+        }
+        else
+        {
+            ReturnDraggedItemToOriginalPosition();
+        }
+    }
+
+    private Vector2Int GetValidMergePosition(Vector2Int endGridPos)
+    {
+        if (IsValidGridPosition(endGridPos))
+        {
+            return endGridPos;
+        }
+        return currentHoverTarget.GridPosition;
+    }
+
+    private bool IsValidGridPosition(Vector2Int position)
+    {
+        return position.x >= 0 && 
+               position.x < GridManager.Instance.GridSize.x &&
+               position.y >= 0 && 
+               position.y < GridManager.Instance.GridSize.y &&
+               GridManager.Instance.Cells.ContainsKey(position);
+    }
+
+    private void ReturnDraggedItemToOriginalPosition()
+    {
+        draggedItem.transform.position = draggedItem.OccupiedCell.transform.position;
+    }
+
+    private void CleanupDragState()
+    {
+        dragPreview.gameObject.SetActive(false);
+        ClearMergeHighlight();
+        draggedItem = null;
+        currentHoverTarget = null;
     }
 
     private void UpdateMergeTarget(Vector2Int gridPos)
@@ -175,15 +216,16 @@ public class InputManager : MonoBehaviour
             return;
 
         var targetItem = GridManager.Instance.GetItemAtCell(gridPos);
-        if (targetItem != null && draggedItem.CanMerge(targetItem))
+        UpdateMergeHighlight(targetItem, gridPos);
+    }
+
+    private void UpdateMergeHighlight(GridItem targetItem, Vector2Int gridPos)
+    {
+        if (targetItem != null)
         {
+            bool canMerge = draggedItem.CanMerge(targetItem);
             currentHoverTarget = targetItem;
-            HighlightMergeTarget(true);
-        }
-        else if (targetItem != null)
-        {
-            currentHoverTarget = targetItem;
-            HighlightMergeTarget(false);
+            HighlightMergeTarget(canMerge);
         }
         else
         {

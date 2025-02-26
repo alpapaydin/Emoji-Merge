@@ -20,17 +20,4 @@ public class ProducedItem : GridItem
     {
         return IsReadyToMerge;
     }
-
-    public override GridItem MergeWith(GridItem other)
-    {
-        return MergeWith(other, other.GridPosition);
-    }
-
-    public override GridItem MergeWith(GridItem other, Vector2Int position)
-    {
-        if (!CanMerge(other)) return null;
-
-        ShowParticleEffect("merge");
-        return ItemManager.Instance.CreateMergedItem(position, properties.itemType, currentLevel + 1);
-    }
 }

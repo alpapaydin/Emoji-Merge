@@ -10,16 +10,13 @@ public class GridItem : MonoBehaviour
     protected int currentLevel = 1;
     protected bool isReadyToMerge = true;
     protected SpriteRenderer spriteRenderer;
+    private bool isBeingMerged = false;
 
     public int CurrentLevel => currentLevel;
     public bool IsReadyToMerge => isReadyToMerge;
     public Cell OccupiedCell => occupiedCell;
     public Vector2Int GridPosition => gridPosition;
-    public bool CanMerge(GridItem other) => 
-        other != null && 
-        other.properties.itemType == properties.itemType && 
-        other.currentLevel == currentLevel && 
-        currentLevel < properties.maxLevel;
+    public bool CanMerge(GridItem other) => MergeManager.Instance.CanMergeItems(this, other);
 
     protected virtual void Awake()
     {
@@ -52,9 +49,14 @@ public class GridItem : MonoBehaviour
         }
     }
 
+    public void SetMergeState(bool isMerging)
+    {
+        isBeingMerged = isMerging;
+    }
+
     protected virtual void OnDestroy()
     {
-        if (occupiedCell != null)
+        if (occupiedCell != null && !isBeingMerged)
         {
             GridManager.Instance?.ClearCell(gridPosition);
         }
@@ -76,16 +78,6 @@ public class GridItem : MonoBehaviour
         }
     }
 
-    public virtual GridItem MergeWith(GridItem other)
-    {
-        if (!CanMerge(other))
-            return null;
-
-        // merge item logic
-        int newLevel = currentLevel + 1;
-        return ItemManager.Instance.CreateMergedItem(gridPosition, properties.itemType, newLevel);        
-    }
-
     public Sprite GetNextLevelSprite()
     {
         if (properties != null && properties.levelSprites != null &&
@@ -98,11 +90,14 @@ public class GridItem : MonoBehaviour
 
     public virtual GridItem MergeWith(GridItem other, Vector2Int mergePosition)
     {
-        if (!CanMerge(other))
-            return null;
-
+        SetMergeState(true);
+        if (other != null)
+        {
+            other.SetMergeState(true);
+        }
+        
         ShowParticleEffect("merge");
-        return ItemManager.Instance.CreateMergedItem(mergePosition, properties.itemType, currentLevel + 1);
+        return MergeManager.Instance.PerformMerge(this, other, mergePosition);
     }
 
     protected void ShowParticleEffect(string effectType)

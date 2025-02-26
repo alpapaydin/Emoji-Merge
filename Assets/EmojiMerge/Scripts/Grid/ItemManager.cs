@@ -8,7 +8,7 @@ public class ItemManager : MonoBehaviour
     [SerializeField] private GameObject itemsContainer;
 
     [Header("Item Properties")]
-    [SerializeField] private ProducerItemProperties[] producerProperties;
+    [SerializeField] private ProducerItemProperties producerProperties;
     [SerializeField] private ResourceItemProperties energyProperties;
     [SerializeField] private ResourceItemProperties coinProperties;
     [SerializeField] private ProducedItemProperties producedItemProperties;
@@ -27,6 +27,19 @@ public class ItemManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void SpawnTestItems()
+    {
+        CreateProducedItem(new Vector2Int(2, 2), 1);
+        CreateProducedItem(new Vector2Int(3, 2), 1);
+        CreateProducedItem(new Vector2Int(4, 2), 1);
+        CreateProducedItem(new Vector2Int(2, 3), 2);
+        CreateProducedItem(new Vector2Int(3, 3), 2);
+        
+        CreateProducerItem(new Vector2Int(1, 1), 3);
+        CreateProducerItem(new Vector2Int(1, 2), 4);
+        CreateProducerItem(new Vector2Int(1, 3), 5);
     }
 
     private GameObject CreateGridItemBase(string name)
@@ -52,7 +65,8 @@ public class ItemManager : MonoBehaviour
     public GridItem CreateProducedItem(Vector2Int gridPosition, int level)
     {
         var emptyPos = GridManager.Instance.FindNearestEmptyCell(gridPosition);
-        if (!emptyPos.HasValue) return null;
+        if (!emptyPos.HasValue || !GridManager.Instance.Cells.ContainsKey(emptyPos.Value)) 
+            return null;
 
         GameObject itemObj = CreateGridItemBase("Produced Item");
         if (itemObj == null) return null;
@@ -62,19 +76,21 @@ public class ItemManager : MonoBehaviour
         
         if (GridManager.Instance.TryPlaceItemInCell(emptyPos.Value, item))
         {
+            var cell = GridManager.Instance.Cells[emptyPos.Value];
+            cell.SetItem(item);
+            item.SetGridPosition(emptyPos.Value, cell);
             return item;
         }
-        else
-        {
-            Destroy(itemObj);
-            return null;
-        }
+        
+        Destroy(itemObj);
+        return null;
     }
 
     public GridItem CreateResourceItem(Vector2Int gridPosition, ItemType type, int level)
     {
         var emptyPos = GridManager.Instance.FindNearestEmptyCell(gridPosition);
-        if (!emptyPos.HasValue) return null;
+        if (!emptyPos.HasValue || !GridManager.Instance.Cells.ContainsKey(emptyPos.Value)) 
+            return null;
 
         GameObject itemObj = CreateGridItemBase($"{type} Item");
         if (itemObj == null) return null;
@@ -84,13 +100,14 @@ public class ItemManager : MonoBehaviour
         
         if (GridManager.Instance.TryPlaceItemInCell(emptyPos.Value, item))
         {
+            var cell = GridManager.Instance.Cells[emptyPos.Value];
+            cell.SetItem(item);
+            item.SetGridPosition(emptyPos.Value, cell);
             return item;
         }
-        else
-        {
-            Destroy(itemObj);
-            return null;
-        }
+        
+        Destroy(itemObj);
+        return null;
     }
 
     public GridItem CreateMergedItem(Vector2Int gridPosition, ItemType type, int level)
@@ -112,46 +129,47 @@ public class ItemManager : MonoBehaviour
                 break;
         }
 
-        if (item != null && GridManager.Instance.TryPlaceItemInCell(gridPosition, item))
+        if (item != null)
         {
-            return item;
+            if (GridManager.Instance.TryPlaceItemInCell(gridPosition, item, force: true))
+            {
+                return item;
+            }
         }
-        else
-        {
-            Destroy(itemObj);
-            return null;
-        }
+        
+        Destroy(itemObj);
+        return null;
     }
 
-    public GridItem CreateProducerItem(Vector2Int gridPosition, int producerIndex, int level = 1)
+    public GridItem CreateProducerItem(Vector2Int gridPosition, int level = 1)
     {
-        if (producerIndex < 0 || producerIndex >= producerProperties.Length)
-            return null;
-
         var emptyPos = GridManager.Instance.FindNearestEmptyCell(gridPosition);
-        if (!emptyPos.HasValue) return null;
+        if (!emptyPos.HasValue || !GridManager.Instance.Cells.ContainsKey(emptyPos.Value)) 
+            return null;
 
         GameObject itemObj = CreateGridItemBase("Producer Item");
         if (itemObj == null) return null;
 
         ProducerItem item = itemObj.AddComponent<ProducerItem>();
-        item.Initialize(producerProperties[producerIndex], level);
+        item.Initialize(producerProperties, level);
 
         if (GridManager.Instance.TryPlaceItemInCell(emptyPos.Value, item))
         {
+            var cell = GridManager.Instance.Cells[emptyPos.Value];
+            cell.SetItem(item);
+            item.SetGridPosition(emptyPos.Value, cell);
             return item;
         }
-        else
-        {
-            Destroy(itemObj);
-            return null;
-        }
+        
+        Destroy(itemObj);
+        return null;
     }
 
     public GridItem CreateChestItem(Vector2Int gridPosition, int level = 1)
     {
         var emptyPos = GridManager.Instance.FindNearestEmptyCell(gridPosition);
-        if (!emptyPos.HasValue) return null;
+        if (!emptyPos.HasValue || !GridManager.Instance.Cells.ContainsKey(emptyPos.Value)) 
+            return null;
 
         GameObject itemObj = CreateGridItemBase("Chest Item");
         if (itemObj == null) return null;
@@ -161,12 +179,13 @@ public class ItemManager : MonoBehaviour
 
         if (GridManager.Instance.TryPlaceItemInCell(emptyPos.Value, item))
         {
+            var cell = GridManager.Instance.Cells[emptyPos.Value];
+            cell.SetItem(item);
+            item.SetGridPosition(emptyPos.Value, cell);
             return item;
         }
-        else
-        {
-            Destroy(itemObj);
-            return null;
-        }
+        
+        Destroy(itemObj);
+        return null;
     }
 }

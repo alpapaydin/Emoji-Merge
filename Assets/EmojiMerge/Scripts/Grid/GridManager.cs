@@ -11,10 +11,10 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Vector2Int gridSize = new Vector2Int(9, 9);
     [SerializeField] private GridInitializer gridInitializer;
     [SerializeField] private GridStyling gridStyling;
+    [SerializeField] private ItemManager itemManager;
     [SerializeField] private float gridPadding = 0.5f;
     
     private InputManager inputManager;
-    private Dictionary<Vector2Int, GridItem> itemsOnGrid = new Dictionary<Vector2Int, GridItem>();
     
     public Vector2 GridScaleMultiplier {get; private set;} = new Vector2(1f, 1f);
     public Dictionary<Vector2Int, Cell> Cells = new Dictionary<Vector2Int, Cell>();
@@ -47,6 +47,7 @@ public class GridManager : MonoBehaviour
     private void Start()
     {
         SetupInputManager();
+        SetupMergeManager();
 
         if (gridInitializer != null)
             gridInitializer.InitializeGrid(grid, gridSize);
@@ -57,15 +58,23 @@ public class GridManager : MonoBehaviour
         GridLayoutManager.PositionAndScaleGrid(grid, gridSize, gridPadding);
         GridScaleMultiplier = grid.transform.localScale;
         OnGridInitialized?.Invoke();
+        Debug.Log("Grid Initialized");
+        itemManager.SpawnTestItems();
+
     }
 
     private void SetupInputManager()
     {
         GameObject inputObj = new GameObject("Grid Input Manager");
-        inputObj.transform.SetParent(transform);
         inputManager = inputObj.AddComponent<InputManager>();
         inputManager.Initialize(grid);
         inputManager.OnTouchEnd += CheckCellTapped;
+    }
+
+    private void SetupMergeManager()
+    {
+        GameObject mergeObj = new GameObject("Grid Merge Manager");
+        mergeObj.AddComponent<MergeManager>();
     }
 
     private void CheckCellTapped(Vector2Int position)
@@ -81,29 +90,37 @@ public class GridManager : MonoBehaviour
 
     public bool IsCellOccupied(Vector2Int position)
     {
-        return itemsOnGrid.ContainsKey(position);
+        return Cells.TryGetValue(position, out var cell) && cell.IsOccupied;
     }
 
     public GridItem GetItemAtCell(Vector2Int position)
     {
-        return itemsOnGrid.TryGetValue(position, out var item) ? item : null;
+        return Cells.TryGetValue(position, out var cell) ? cell.CurrentItem : null;
     }
 
-    public bool TryPlaceItemInCell(Vector2Int position, GridItem item)
+    public bool TryPlaceItemInCell(Vector2Int position, GridItem item, bool force = false)
     {
-        if (!Cells.TryGetValue(position, out var cell) || IsCellOccupied(position))
+        if (!Cells.TryGetValue(position, out var cell))
             return false;
 
-        itemsOnGrid[position] = item;
+        if (cell.IsOccupied && !force)
+            return false;
+
+        if (force && cell.IsOccupied)
+        {
+            cell.ClearItem();
+        }
+
+        cell.SetItem(item);
         item.SetGridPosition(position, cell);
         return true;
     }
 
     public void ClearCell(Vector2Int position)
     {
-        if (itemsOnGrid.ContainsKey(position))
+        if (Cells.TryGetValue(position, out var cell))
         {
-            itemsOnGrid.Remove(position);
+            cell.ClearItem();
         }
     }
 
@@ -133,5 +150,20 @@ public class GridManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public List<GridItem> FindItemsWithLevel(ItemType type, int level)
+    {
+        List<GridItem> items = new List<GridItem>();
+        foreach (var cell in Cells.Values)
+        {
+            if (cell.CurrentItem != null && 
+                cell.CurrentItem.properties.itemType == type && 
+                cell.CurrentItem.CurrentLevel == level)
+            {
+                items.Add(cell.CurrentItem);
+            }
+        }
+        return items;
     }
 }
