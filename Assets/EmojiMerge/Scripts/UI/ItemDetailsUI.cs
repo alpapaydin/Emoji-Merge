@@ -39,18 +39,6 @@ public class ItemDetailsUI : MonoBehaviour
             itemContainer = itemExtras.Q<VisualElement>("ContainedItems");
             itemProgress = itemExtras.Q<ProgressBar>("ItemProgress");
         }
-
-        if (itemName == null || itemLevel == null || itemIcon == null || 
-            itemExtras == null || itemContainer == null || itemProgress == null)
-        {
-            Debug.LogError($"Some UI elements not found in {gameObject.name}. " +
-                $"ItemName: {itemName != null}, " +
-                $"ItemLevel: {itemLevel != null}, " +
-                $"ItemIcon: {itemIcon != null}, " +
-                $"ItemExtras: {itemExtras != null}, " +
-                $"ItemContainer: {itemContainer != null}, " +
-                $"ItemProgress: {itemProgress != null}");
-        }
     }
 
     private void OnDisable()
@@ -113,12 +101,12 @@ public class ItemDetailsUI : MonoBehaviour
         if (item is ChestItem chest)
         {
             itemProgress.value = chest.UnlockProgress * 100;
-            UpdateProgressText(chest.IsUnlocking ? "Unlocking" : chest.IsLocked ? "Locked" : "Ready!");
+            UpdateProgressText(chest.IsUnlocking ? "Unlocking" : chest.IsLocked ? "Locked" : "Finished!");
         }
         else
         {
             itemProgress.value = item.RechargeProgress * 100;
-            UpdateProgressText(item.IsRecharging ? "Producing" : "Ready!");
+            UpdateProgressText(item.IsRecharging ? "Producing" : "Finished!");
         }
 
         itemContainer.Clear();
@@ -136,7 +124,7 @@ public class ItemDetailsUI : MonoBehaviour
     {
         if (string.IsNullOrEmpty(baseText)) return;
         
-        if (baseText == "Ready!")
+        if (baseText == "Finished!")
         {
             itemProgress.title = baseText;
         }

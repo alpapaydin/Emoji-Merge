@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class ItemManager : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class ItemManager : MonoBehaviour
 
     [Header("Prefabs")]
     [SerializeField] private GameObject gridItemPrefab;
+
+    public event Action OnGridItemCreated;
 
     private void Awake()
     {
@@ -60,7 +63,7 @@ public class ItemManager : MonoBehaviour
         itemObj.name = name;
         
         itemObj.transform.localScale *= GridManager.Instance.GridScaleMultiplier;
-        
+        OnGridItemCreated?.Invoke();
         return itemObj;
     }
 

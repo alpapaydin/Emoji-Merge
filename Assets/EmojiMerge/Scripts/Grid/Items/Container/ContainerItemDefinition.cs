@@ -4,18 +4,10 @@ using UnityEngine;
 using System;
 
 [Serializable]
-public struct ContainerItemCapacity
-{
-    public BaseItemProperties itemDefinition;
-    public int level;
-    public int count;
-}
-
-[Serializable]
 public struct ContainerItemLevel
 {
     public float rechargeTime;
-    public ContainerItemCapacity[] itemCapacities;
+    public ItemLevelCount[] itemCapacities;
     public bool canSpawnItems;
 
     public int TotalCapacity

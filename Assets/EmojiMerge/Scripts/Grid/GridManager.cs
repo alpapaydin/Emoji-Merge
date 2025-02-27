@@ -23,6 +23,7 @@ public class GridManager : MonoBehaviour
     public GridStyling Styling => gridStyling;
     public Vector2Int GridSize => gridSize;
     public event Action OnGridInitialized;
+    public event Action OnGridResized;
 
     private void Awake()
     {
@@ -57,8 +58,8 @@ public class GridManager : MonoBehaviour
             
         GridLayoutManager.PositionAndScaleGrid(grid, gridSize, gridPadding);
         GridScaleMultiplier = grid.transform.localScale;
+        OnGridResized?.Invoke();
         OnGridInitialized?.Invoke();
-        Debug.Log("Grid Initialized");
         itemManager.SpawnTestItems();
 
     }

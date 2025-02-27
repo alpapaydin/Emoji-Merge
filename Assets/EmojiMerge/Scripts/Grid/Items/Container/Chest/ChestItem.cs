@@ -77,13 +77,10 @@ public class ChestItem : ContainerItem
     {
         if (isUnlocking && isLocked)
         {
-            float oldProgress = unlockProgress;
             unlockProgress += Time.deltaTime;
             
-            if (Mathf.FloorToInt(oldProgress) != Mathf.FloorToInt(unlockProgress))
-            {
-                NotifyStateChanged();
-            }
+            // Notify on any progress change, not just whole numbers
+            NotifyStateChanged();
             
             if (unlockProgress >= CurrentLevelData.rechargeTime)
             {

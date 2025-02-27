@@ -157,13 +157,9 @@ public abstract class ContainerItem : GridItem
     {
         if (isRecharging)
         {
-            float oldProgress = rechargeProgress;
             rechargeProgress += Time.deltaTime;
             
-            if (Mathf.FloorToInt(oldProgress) != Mathf.FloorToInt(rechargeProgress))
-            {
-                NotifyStateChanged();
-            }
+            NotifyStateChanged();
             
             if (rechargeProgress >= CurrentLevelData.rechargeTime)
             {
@@ -186,7 +182,7 @@ public abstract class ContainerItem : GridItem
         UpdateRecharge();
     }
 
-    protected virtual void SpawnSingleItem(ContainerItemCapacity capacity)
+    protected virtual void SpawnSingleItem(ItemLevelCount capacity)
     {
         if (inventoryItemCounts[capacity.level][capacity.itemDefinition] > 0)
         {
@@ -210,9 +206,9 @@ public abstract class ContainerItem : GridItem
         }
     }
 
-    protected virtual ContainerItemCapacity? SelectItemToSpawn()
+    protected virtual ItemLevelCount? SelectItemToSpawn()
     {
-        List<ContainerItemCapacity> availableSlots = new List<ContainerItemCapacity>();
+        List<ItemLevelCount> availableSlots = new List<ItemLevelCount>();
         
         foreach (var capacity in CurrentLevelData.itemCapacities)
         {
