@@ -25,22 +25,26 @@ MonoBehaviour:
   levels:
   - rechargeTime: 0
     itemCapacities: []
-    canProduce: 0
+    canSpawnItems: 0
   - rechargeTime: 0
     itemCapacities: []
-    canProduce: 0
+    canSpawnItems: 0
   - rechargeTime: 0
     itemCapacities: []
-    canProduce: 0
+    canSpawnItems: 0
   - rechargeTime: 10
     itemCapacities:
-    - level: 1
-      count: 10
-    canProduce: 1
+    - itemDefinition: {fileID: 11400000, guid: 8e4972eca33809545951f541ecf4bec9, type: 2}
+      level: 1
+      count: 5
+    canSpawnItems: 0
   - rechargeTime: 20
     itemCapacities:
-    - level: 1
-      count: 10
-    - level: 2
-      count: 10
-    canProduce: 1
+    - itemDefinition: {fileID: 11400000, guid: 8e4972eca33809545951f541ecf4bec9, type: 2}
+      level: 1
+      count: 5
+    - itemDefinition: {fileID: 11400000, guid: 8e4972eca33809545951f541ecf4bec9, type: 2}
+      level: 2
+      count: 3
+    canSpawnItems: 0
+  producedItemProperties: {fileID: 0}

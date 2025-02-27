@@ -1,15 +1,14 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ChestItem : GridItem
+public class ChestItem : ContainerItem
 {
     private bool isLocked = true;
     private float unlockProgress = 0f;
     private bool isUnlocking = false;
     
     private ChestItemProperties ChestProperties => properties as ChestItemProperties;
-    private ChestLevel CurrentLevelData => ChestProperties.GetLevelData(currentLevel);
-
+    
     public override void Initialize(BaseItemProperties props, int level = 1)
     {
         if (!(props is ChestItemProperties))
@@ -24,44 +23,49 @@ public class ChestItem : GridItem
 
     public override bool CanPerformAction()
     {
+        if (!base.CanPerformAction())
+            return false;
+
         return !isLocked;
     }
 
     public override void OnTapped()
     {
         base.OnTapped();
-        if (isLocked) return;
-        
-        SpawnContainedItems();
-    }
+        if (!CanPerformAction()) return;
 
-    private void SpawnContainedItems()
-    {
-        bool anyItemSpawned = false;
-        foreach (var drop in CurrentLevelData.resourceDrops)
+        GameManager.Instance.ConsumeEnergy(ContainerProperties.energyCost);
+        var selectedItem = SelectItemToSpawn();
+        if (selectedItem.HasValue)
         {
-            for (int i = 0; i < drop.count; i++)
+            SpawnSingleItem(selectedItem.Value);
+            if (!HasItemsLeft())
             {
-                GridItem newItem = ItemManager.Instance.CreateResourceItem(gridPosition, drop.resourceType, drop.level);
-                if (newItem != null)
-                {
-                    anyItemSpawned = true;
-                }
+                Destroy(gameObject);
             }
         }
+    }
 
-        if (anyItemSpawned)
+    private bool HasItemsLeft()
+    {
+        foreach (var levelInventory in inventoryItemCounts.Values)
         {
-            // destroy chest after successfully spawning at least one item? or stays
-            Destroy(gameObject);
+            foreach (var count in levelInventory.Values)
+            {
+                if (count > 0) return true;
+            }
         }
+        return false;
     }
 
     private void StartUnlocking()
     {
-        isUnlocking = true;
-        unlockProgress = 0f;
-        ShowParticleEffect("unlock_start");
+        if (!isUnlocking)
+        {
+            isUnlocking = true;
+            unlockProgress = 0f;
+            ShowParticleEffect("unlock_start");
+        }
     }
 
     private void UpdateUnlock()
@@ -69,7 +73,7 @@ public class ChestItem : GridItem
         if (isUnlocking && isLocked)
         {
             unlockProgress += Time.deltaTime;
-            if (unlockProgress >= CurrentLevelData.unlockTime)
+            if (unlockProgress >= CurrentLevelData.rechargeTime)
             {
                 CompleteUnlock();
             }
@@ -83,8 +87,9 @@ public class ChestItem : GridItem
         ShowParticleEffect("ready");
     }
 
-    private void Update()
+    protected override void Update()
     {
         UpdateUnlock();
+        base.Update();
     }
 }

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class ProducedItem : GridItem
 {
+    protected bool isConsumed = false;
+    
     private ProducedItemProperties ProducedProperties => properties as ProducedItemProperties;
 
     public override void Initialize(BaseItemProperties props, int level = 1)
@@ -18,6 +20,6 @@ public class ProducedItem : GridItem
 
     public override bool CanPerformAction()
     {
-        return IsReadyToMerge;
+        return !isConsumed && IsReadyToMerge;
     }
 }

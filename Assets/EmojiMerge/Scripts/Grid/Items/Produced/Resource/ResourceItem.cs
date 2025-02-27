@@ -1,8 +1,7 @@
 using UnityEngine;
 
-public class ResourceItem : GridItem
+public class ResourceItem : ProducedItem
 {
-    private bool isConsumed = false;
     private ResourceItemProperties ResourceProperties => properties as ResourceItemProperties;
 
     public override void Initialize(BaseItemProperties props, int level = 1)
@@ -14,12 +13,6 @@ public class ResourceItem : GridItem
         }
 
         base.Initialize(props, level);
-        ShowParticleEffect("spawn");
-    }
-
-    public override bool CanPerformAction()
-    {
-        return !isConsumed;
     }
 
     public override void OnTapped()

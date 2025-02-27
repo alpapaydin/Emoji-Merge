@@ -116,17 +116,17 @@ public class ItemManager : MonoBehaviour
         return null;
     }
 
-    public GridItem CreateResourceItem(Vector2Int gridPosition, ItemType type, int level)
+    public GridItem CreateResourceItem(Vector2Int gridPosition, BaseItemProperties itemProperties, int level)
     {
         var emptyPos = GridManager.Instance.FindNearestEmptyCell(gridPosition);
         if (!emptyPos.HasValue || !GridManager.Instance.Cells.ContainsKey(emptyPos.Value)) 
             return null;
 
-        GameObject itemObj = CreateGridItemBase($"{type} Item");
+        GameObject itemObj = CreateGridItemBase($"{itemProperties.itemType} Item");
         if (itemObj == null) return null;
 
         ResourceItem item = itemObj.AddComponent<ResourceItem>();
-        item.Initialize(type == ItemType.Energy ? energyProperties : coinProperties, level);
+        item.Initialize(itemProperties, level);
         
         if (GridManager.Instance.TryPlaceItemInCell(emptyPos.Value, item))
         {
