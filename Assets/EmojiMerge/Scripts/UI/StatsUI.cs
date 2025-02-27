@@ -5,182 +5,138 @@ using System.Collections;
 public class StatsUI : MonoBehaviour
 {
     [SerializeField] private UIDocument uiDocument;
-    [SerializeField] private float updateDuration = 0.5f;
+    [SerializeField] private float animationSpeed = 50f;
     
-    private VisualElement rootElement;
     private Label goldLabel;
     private ProgressBar energyProgress;
+    private VisualElement energyTitle;
     
-    private int currentGold;
-    private float currentEnergy;
-    private float displayedEnergy;
-    private int displayedGold;
-    private Coroutine goldUpdateRoutine;
-    private Coroutine energyUpdateRoutine;
-
-    private int targetGold;
-    private float targetEnergy;
-    private bool isAnimatingGold = false;
-    private bool isAnimatingEnergy = false;
+    private float displayedEnergy, targetEnergy;
+    private float displayedGold, targetGold;
+    private Coroutine goldAnimation;
+    private Coroutine energyAnimation;
+    
+    private readonly StyleScale normalScale = new StyleScale(new Scale(Vector2.one));
+    private readonly StyleScale punchScale = new StyleScale(new Scale(Vector2.one * 1.2f));
+    private readonly StyleColor normalColor = new StyleColor(Color.white);
+    private readonly StyleColor increaseColor = new StyleColor(Color.green);
+    private readonly StyleColor decreaseColor = new StyleColor(Color.red);
 
     private void Awake()
     {
-        rootElement = uiDocument.rootVisualElement.Q<VisualElement>("TopBar");
-        goldLabel = rootElement.Q<Label>("GoldLabel");
-        energyProgress = rootElement.Q<ProgressBar>("EnergyProgress");
+        var root = uiDocument.rootVisualElement;
+        goldLabel = root.Q<Label>("GoldLabel");
+        energyProgress = root.Q<ProgressBar>("EnergyProgress");
+        energyTitle = energyProgress?.Q<VisualElement>("unity-title");
         
-        currentGold = displayedGold = 0;
-        currentEnergy = displayedEnergy = 0;
+        if (goldLabel == null || energyProgress == null)
+        {
+            Debug.LogError($"UI elements not found in {gameObject.name}");
+            return;
+        }
+
+        ResetStyles();
+        GameManager.Instance.UpdateUIEnergy();
+        GameManager.Instance.UpdateUICoins();
     }
 
-    public void UpdateGold(int newGoldValue)
+    private void ResetStyles()
     {
-        targetGold = newGoldValue;
-        currentGold = displayedGold;
-        
-        if (!isAnimatingGold)
-        {
-            if (goldUpdateRoutine != null)
-            {
-                StopCoroutine(goldUpdateRoutine);
-            }
-            goldUpdateRoutine = StartCoroutine(AnimateGoldUpdate());
-        }
-    }
-
-    public void UpdateEnergy(int newEnergyValue)
-    {
-        targetEnergy = newEnergyValue;
-        currentEnergy = displayedEnergy;
-        
-        if (!isAnimatingEnergy)
-        {
-            if (energyUpdateRoutine != null)
-            {
-                StopCoroutine(energyUpdateRoutine);
-            }
-            energyUpdateRoutine = StartCoroutine(AnimateEnergyUpdate());
-        }
-    }
-
-    private IEnumerator AnimateGoldUpdate()
-    {
-        isAnimatingGold = true;
-        float animationTimeLeft = updateDuration;
-        
-        while (displayedGold != targetGold)
-        {
-            int startGold = displayedGold;
-            int difference = targetGold - startGold;
-            bool isIncrease = difference > 0;
-            
-            if ((animationTimeLeft == updateDuration || 
-                (isIncrease && displayedGold < currentGold) || 
-                (!isIncrease && displayedGold > currentGold)))
-            {
-                goldLabel.style.scale = new StyleScale(new Scale(new Vector2(1.2f, 1.2f)));
-                goldLabel.style.color = isIncrease ? new StyleColor(Color.green) : new StyleColor(Color.red);
-            }
-
-            float elapsed = 0f;
-            while (elapsed < animationTimeLeft)
-            {
-                elapsed += Time.deltaTime;
-                float progress = elapsed / animationTimeLeft;
-                
-                progress = progress * progress * (3f - 2f * progress);
-                displayedGold = startGold + Mathf.RoundToInt(difference * progress);
-                goldLabel.text = displayedGold.ToString();
-                
-                float scaleProgress = 1f + (0.2f * (1f - progress));
-                goldLabel.style.scale = new StyleScale(new Scale(new Vector2(scaleProgress, scaleProgress)));
-                
-                if (displayedGold != targetGold && targetGold != startGold + difference)
-                {
-                    currentGold = displayedGold;
-                    animationTimeLeft = updateDuration * (1f - progress);
-                    break;
-                }
-                
-                yield return null;
-            }
-            
-            currentGold = targetGold;
-            displayedGold = targetGold;
-        }
-        
-        displayedGold = targetGold;
-        currentGold = targetGold;
-        goldLabel.text = targetGold.ToString();
-        goldLabel.style.scale = new StyleScale(new Scale(new Vector2(1f, 1f)));
-        goldLabel.style.color = new StyleColor(Color.white);
-        goldUpdateRoutine = null;
-        isAnimatingGold = false;
-    }
-
-    private IEnumerator AnimateEnergyUpdate()
-    {
-        isAnimatingEnergy = true;
-        float animationTimeLeft = updateDuration;
-        var energyTitle = energyProgress.Q<VisualElement>("unity-title");
-        
-        while (Mathf.Abs(displayedEnergy - targetEnergy) > 0.01f)
-        {
-            float startEnergy = displayedEnergy;
-            float difference = targetEnergy - startEnergy;
-            bool isIncrease = difference > 0;
-            
-            if ((animationTimeLeft == updateDuration || 
-                (isIncrease && displayedEnergy < currentEnergy) || 
-                (!isIncrease && displayedEnergy > currentEnergy)) 
-                && energyTitle != null)
-            {
-                energyTitle.style.scale = new StyleScale(new Scale(new Vector2(1.2f, 1.2f)));
-                energyTitle.style.color = isIncrease ? new StyleColor(Color.green) : new StyleColor(Color.red);
-            }
-
-            float elapsed = 0f;
-            while (elapsed < animationTimeLeft)
-            {
-                elapsed += Time.deltaTime;
-                float progress = elapsed / animationTimeLeft;
-                
-                progress = progress * progress * (3f - 2f * progress);
-                displayedEnergy = startEnergy + (difference * progress);
-                energyProgress.title = Mathf.RoundToInt(displayedEnergy).ToString() + " / 100";
-                energyProgress.value = displayedEnergy;
-                
-                if (energyTitle != null)
-                {
-                    float scaleProgress = 1f + (0.2f * (1f - progress));
-                    energyTitle.style.scale = new StyleScale(new Scale(new Vector2(scaleProgress, scaleProgress)));
-                }
-                
-                if (Mathf.Abs(displayedEnergy - targetEnergy) > 0.01f && 
-                    Mathf.Abs(targetEnergy - (startEnergy + difference)) > 0.01f)
-                {
-                    currentEnergy = displayedEnergy;
-                    animationTimeLeft = updateDuration * (1f - progress);
-                    break;
-                }
-                
-                yield return null;
-            }
-            
-            currentEnergy = targetEnergy;
-            displayedEnergy = targetEnergy;
-        }
-        
-        displayedEnergy = targetEnergy;
-        currentEnergy = targetEnergy;
-        energyProgress.title = Mathf.RoundToInt(targetEnergy).ToString() + " / 100";
-        energyProgress.value = targetEnergy;
+        goldLabel.style.scale = normalScale;
+        goldLabel.style.color = normalColor;
         if (energyTitle != null)
         {
-            energyTitle.style.scale = new StyleScale(new Scale(new Vector2(1f, 1f)));
-            energyTitle.style.color = new StyleColor(Color.white);
+            energyTitle.style.scale = normalScale;
+            energyTitle.style.color = normalColor;
         }
-        energyUpdateRoutine = null;
-        isAnimatingEnergy = false;
+    }
+
+    public void UpdateGold(int value)
+    {
+        targetGold = value;
+        if (goldAnimation == null)
+        {
+            goldAnimation = StartCoroutine(AnimateGold());
+        }
+    }
+
+    public void UpdateEnergy(int value)
+    {
+        targetEnergy = value;
+        if (energyAnimation == null)
+        {
+            energyAnimation = StartCoroutine(AnimateEnergy());
+        }
+    }
+
+    private IEnumerator AnimateGold()
+    {
+        goldLabel.style.scale = punchScale;
+        bool increasing = targetGold > displayedGold;
+        goldLabel.style.color = increasing ? increaseColor : decreaseColor;
+
+        while (Mathf.Abs(displayedGold - targetGold) > 0.01f)
+        {
+            float step = Time.deltaTime * animationSpeed;
+            displayedGold = Mathf.MoveTowards(displayedGold, targetGold, step);
+            goldLabel.text = Mathf.RoundToInt(displayedGold).ToString();
+            
+            bool newIncreasing = targetGold > displayedGold;
+            if (newIncreasing != increasing)
+            {
+                increasing = newIncreasing;
+                goldLabel.style.color = increasing ? increaseColor : decreaseColor;
+            }
+            
+            yield return null;
+        }
+
+        displayedGold = targetGold;
+        goldLabel.text = targetGold.ToString();
+        goldLabel.style.scale = normalScale;
+        goldLabel.style.color = normalColor;
+        goldAnimation = null;
+    }
+
+    private IEnumerator AnimateEnergy()
+    {
+        if (energyTitle != null)
+        {
+            energyTitle.style.scale = punchScale;
+        }
+
+        while (Mathf.Abs(displayedEnergy - targetEnergy) > 0.01f)
+        {
+            float step = Time.deltaTime * animationSpeed;
+            displayedEnergy = Mathf.MoveTowards(displayedEnergy, targetEnergy, step);
+            
+            bool increasing = targetEnergy > displayedEnergy;
+            if (energyTitle != null)
+            {
+                energyTitle.style.color = increasing ? increaseColor : decreaseColor;
+            }
+
+            int roundedEnergy = Mathf.RoundToInt(displayedEnergy);
+            energyProgress.title = $"{roundedEnergy} / 100";
+            energyProgress.value = displayedEnergy;
+            
+            yield return null;
+        }
+
+        displayedEnergy = targetEnergy;
+        if (energyTitle != null)
+        {
+            energyTitle.style.scale = normalScale;
+            energyTitle.style.color = normalColor;
+        }
+        energyAnimation = null;
+    }
+
+    private void OnDestroy()
+    {
+        if (goldAnimation != null)
+            StopCoroutine(goldAnimation);
+        if (energyAnimation != null)
+            StopCoroutine(energyAnimation);
     }
 }

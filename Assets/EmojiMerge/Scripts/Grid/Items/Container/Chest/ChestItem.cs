@@ -7,6 +7,10 @@ public class ChestItem : ContainerItem
     private float unlockProgress = 0f;
     private bool isUnlocking = false;
     
+    public bool IsLocked => isLocked;
+    public float UnlockProgress => unlockProgress / CurrentLevelData.rechargeTime;
+    public bool IsUnlocking => isUnlocking;
+    
     private ChestItemProperties ChestProperties => properties as ChestItemProperties;
     
     public override void Initialize(BaseItemProperties props, int level = 1)
@@ -65,6 +69,7 @@ public class ChestItem : ContainerItem
             isUnlocking = true;
             unlockProgress = 0f;
             ShowParticleEffect("unlock_start");
+            NotifyStateChanged();
         }
     }
 
@@ -72,7 +77,14 @@ public class ChestItem : ContainerItem
     {
         if (isUnlocking && isLocked)
         {
+            float oldProgress = unlockProgress;
             unlockProgress += Time.deltaTime;
+            
+            if (Mathf.FloorToInt(oldProgress) != Mathf.FloorToInt(unlockProgress))
+            {
+                NotifyStateChanged();
+            }
+            
             if (unlockProgress >= CurrentLevelData.rechargeTime)
             {
                 CompleteUnlock();
@@ -84,7 +96,9 @@ public class ChestItem : ContainerItem
     {
         isUnlocking = false;
         isLocked = false;
+        unlockProgress = CurrentLevelData.rechargeTime;
         ShowParticleEffect("ready");
+        NotifyStateChanged();
     }
 
     protected override void Update()

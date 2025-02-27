@@ -1,16 +1,40 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class ContainerItem : GridItem
 {
+    public event Action OnContainerStateChanged;
+    
     protected Dictionary<int, Dictionary<BaseItemProperties, int>> inventoryItemCounts = new Dictionary<int, Dictionary<BaseItemProperties, int>>();
     protected bool isRecharging = false;
     protected float rechargeProgress = 0f;
     
     protected ContainerItemDefinition ContainerProperties => properties as ContainerItemDefinition;
     protected ContainerItemLevel CurrentLevelData => ContainerProperties.GetLevelData(currentLevel);
+
+    public float RechargeProgress => rechargeProgress / CurrentLevelData.rechargeTime;
+    public bool IsRecharging => isRecharging;
     
+    public IEnumerable<(BaseItemProperties properties, int level, int count)> GetContainedItems()
+    {
+        if (CurrentLevelData.itemCapacities == null) 
+            yield break;
+            
+        foreach (var capacity in CurrentLevelData.itemCapacities)
+        {
+            if (inventoryItemCounts.TryGetValue(capacity.level, out var items))
+            {
+                if (items.TryGetValue(capacity.itemDefinition, out int count))
+                {
+                    yield return (capacity.itemDefinition, capacity.level, count);
+                }
+            }
+        }
+    }
+
     public override void Initialize(BaseItemProperties props, int level = 1)
     {
         if (!(props is ContainerItemDefinition))
@@ -103,6 +127,11 @@ public abstract class ContainerItem : GridItem
             }
         }
 
+        if (inventoryChanged)
+        {
+            NotifyStateChanged();
+        }
+
         if (HasEmptyInventorySlots())
         {
             StartRecharge();
@@ -120,6 +149,7 @@ public abstract class ContainerItem : GridItem
             isRecharging = true;
             rechargeProgress = 0f;
             ShowParticleEffect("recharge_start");
+            NotifyStateChanged();
         }
     }
 
@@ -127,7 +157,14 @@ public abstract class ContainerItem : GridItem
     {
         if (isRecharging)
         {
+            float oldProgress = rechargeProgress;
             rechargeProgress += Time.deltaTime;
+            
+            if (Mathf.FloorToInt(oldProgress) != Mathf.FloorToInt(rechargeProgress))
+            {
+                NotifyStateChanged();
+            }
+            
             if (rechargeProgress >= CurrentLevelData.rechargeTime)
             {
                 CompleteRecharge();
@@ -141,6 +178,7 @@ public abstract class ContainerItem : GridItem
         rechargeProgress = 0f;
         FillInventory();
         ShowParticleEffect("ready");
+        NotifyStateChanged();
     }
 
     protected virtual void Update()
@@ -167,6 +205,7 @@ public abstract class ContainerItem : GridItem
             {
                 inventoryItemCounts[capacity.level][capacity.itemDefinition]--;
                 OnItemSpawned();
+                NotifyStateChanged();
             }
         }
     }
@@ -185,7 +224,7 @@ public abstract class ContainerItem : GridItem
 
         if (availableSlots.Count > 0)
         {
-            return availableSlots[Random.Range(0, availableSlots.Count)];
+            return availableSlots[UnityEngine.Random.Range(0, availableSlots.Count)];
         }
 
         return null;
@@ -197,5 +236,16 @@ public abstract class ContainerItem : GridItem
         {
             StartRecharge();
         }
+    }
+
+    protected virtual void NotifyStateChanged()
+    {
+        OnContainerStateChanged?.Invoke();
+    }
+
+    protected override void OnDestroy()
+    {
+        OnContainerStateChanged = null;
+        base.OnDestroy();
     }
 }

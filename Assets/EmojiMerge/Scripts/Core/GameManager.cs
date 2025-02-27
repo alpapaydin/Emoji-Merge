@@ -30,8 +30,6 @@ public class GameManager : MonoBehaviour
         currentEnergy = maxEnergy;
         currentCoins = 0;
         lastEnergyRechargeTime = Time.time;
-        UpdateUIEnergy();
-        UpdateUICoins();
     }
 
     private void Update()
@@ -76,12 +74,12 @@ public class GameManager : MonoBehaviour
         UpdateUICoins();
     }
 
-    private void UpdateUIEnergy()
+    public void UpdateUIEnergy()
     {
         UIManager.Instance.UpdateEnergy(Mathf.RoundToInt(currentEnergy));
     }
 
-    private void UpdateUICoins()
+    public void UpdateUICoins()
     {
         UIManager.Instance.UpdateGold(currentCoins);
     }
