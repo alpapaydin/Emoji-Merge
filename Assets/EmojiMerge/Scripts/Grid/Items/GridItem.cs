@@ -12,12 +12,25 @@ public class GridItem : MonoBehaviour
     protected bool isReadyToMerge = true;
     protected SpriteRenderer spriteRenderer;
     private bool isBeingMerged = false;
+    private bool isMarkedForDelivery = false;
 
     public int CurrentLevel => currentLevel;
     public bool IsReadyToMerge => isReadyToMerge;
     public Cell OccupiedCell => occupiedCell;
     public Vector2Int GridPosition => gridPosition;
     public bool CanMerge(GridItem other) => MergeManager.Instance.CanMergeItems(this, other);
+    public bool IsMarkedForDelivery 
+    { 
+        get => isMarkedForDelivery;
+        set 
+        {
+            if (isMarkedForDelivery != value)
+            {
+                isMarkedForDelivery = value;
+                UpdateDeliveryVisual();
+            }
+        }
+    }
 
     protected virtual void Awake()
     {
@@ -92,6 +105,7 @@ public class GridItem : MonoBehaviour
     {
         if (occupiedCell != null && !isBeingMerged)
         {
+            IsMarkedForDelivery = false;
             GridManager.Instance?.ClearCell(gridPosition);
         }
     }
@@ -112,6 +126,15 @@ public class GridItem : MonoBehaviour
             currentLevel <= properties.levelSprites.Length)
         {
             spriteRenderer.sprite = properties.levelSprites[currentLevel - 1];
+        }
+    }
+
+    protected virtual void UpdateDeliveryVisual()
+    {
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = isMarkedForDelivery ? 
+                new Color(0.7f, 0.7f, 1f, 1f) : Color.white;
         }
     }
 

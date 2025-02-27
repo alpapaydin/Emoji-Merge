@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/EmojiMerge/Assets/UI/Styles.uss?fileID=7433441132597879392&amp;guid=2b686bebbe1d32e4288b051a44acfc01&amp;type=3#Styles" />
+    <ui:VisualElement name="OrdersPanel" style="flex-grow: 0; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgba(0, 0, 0, 0); border-top-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0.46); top: auto; height: 20%; justify-content: center; flex-direction: row-reverse; align-self: auto; align-items: flex-end; transition-property: scale; transition-timing-function: ease-out-bounce; transition-duration: 1s;" />
+</ui:UXML>

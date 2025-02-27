@@ -3,12 +3,18 @@ using UnityEngine;
 public class MergeManager : MonoBehaviour
 {
     public static MergeManager Instance { get; private set; }
+    
+    [SerializeField] private ItemManager itemManager;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            if (itemManager == null)
+            {
+                itemManager = FindObjectOfType<ItemManager>();
+            }
         }
         else
         {
@@ -48,8 +54,8 @@ public class MergeManager : MonoBehaviour
 
         if (mergedItem != null)
         {
-            Object.Destroy(sourceItem.gameObject);
-            Object.Destroy(targetItem.gameObject);
+            itemManager.DestroyItem(sourceItem);
+            itemManager.DestroyItem(targetItem);
             return mergedItem;
         }
         else

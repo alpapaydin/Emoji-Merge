@@ -41,3 +41,9 @@
     border-top-color: rgba(0, 0, 0, 0);
     border-bottom-color: rgba(0, 0, 0, 0);
 }
+
+.scalebounce {
+    transition-property: scale;
+    transition-duration: 1s;
+    transition-timing-function: ease-out-bounce;
+}

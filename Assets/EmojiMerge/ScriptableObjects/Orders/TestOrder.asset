@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdcf3dfadc50a8d4097451156b0125dc, type: 3}
+  m_Name: TestOrder
+  m_EditorClassIdentifier: 
+  orderName: Test Order
+  description: do some test stuff
+  requiredItems:
+  - itemDefinition: {fileID: 11400000, guid: 8e4972eca33809545951f541ecf4bec9, type: 2}
+    level: 3
+    count: 2
+  goldReward: 0
+  energyReward: 0

@@ -18,7 +18,8 @@ public class ItemManager : MonoBehaviour
     [Header("Prefabs")]
     [SerializeField] private GameObject gridItemPrefab;
 
-    public event Action OnGridItemCreated;
+    public event Action<GridItem> OnGridItemCreated;
+    public event Action<GridItem> OnGridItemDestroyed;
 
     private void Awake()
     {
@@ -45,6 +46,16 @@ public class ItemManager : MonoBehaviour
         CreateProducerItem(new Vector2Int(1, 3), 5);
     }
 
+    private void NotifyItemCreated(GridItem item)
+    {
+        OnGridItemCreated?.Invoke(item);
+    }
+
+    private void NotifyItemDestroyed(GridItem item)
+    {
+        OnGridItemDestroyed?.Invoke(item);
+    }
+
     private GameObject CreateGridItemBase(string name)
     {
         if (gridItemPrefab == null)
@@ -63,7 +74,6 @@ public class ItemManager : MonoBehaviour
         itemObj.name = name;
         
         itemObj.transform.localScale *= GridManager.Instance.GridScaleMultiplier;
-        OnGridItemCreated?.Invoke();
         return itemObj;
     }
 
@@ -84,6 +94,7 @@ public class ItemManager : MonoBehaviour
             var cell = GridManager.Instance.Cells[emptyPos.Value];
             cell.SetItem(item);
             item.SetGridPosition(emptyPos.Value, cell);
+            NotifyItemCreated(item);
             return item;
         }
         
@@ -111,7 +122,7 @@ public class ItemManager : MonoBehaviour
             item.SetGridPosition(emptyPos.Value, cell);
             
             animator.AnimateProduction(startPosition, cell.transform.position);
-            
+            NotifyItemCreated(item);
             return item;
         }
         
@@ -136,6 +147,7 @@ public class ItemManager : MonoBehaviour
             var cell = GridManager.Instance.Cells[emptyPos.Value];
             cell.SetItem(item);
             item.SetGridPosition(emptyPos.Value, cell);
+            NotifyItemCreated(item);
             return item;
         }
         
@@ -166,6 +178,7 @@ public class ItemManager : MonoBehaviour
         {
             if (GridManager.Instance.TryPlaceItemInCell(gridPosition, item, force: true))
             {
+                NotifyItemCreated(item);
                 return item;
             }
         }
@@ -191,6 +204,7 @@ public class ItemManager : MonoBehaviour
             var cell = GridManager.Instance.Cells[emptyPos.Value];
             cell.SetItem(item);
             item.SetGridPosition(emptyPos.Value, cell);
+            NotifyItemCreated(item);
             return item;
         }
         
@@ -215,10 +229,28 @@ public class ItemManager : MonoBehaviour
             var cell = GridManager.Instance.Cells[emptyPos.Value];
             cell.SetItem(item);
             item.SetGridPosition(emptyPos.Value, cell);
+            NotifyItemCreated(item);
             return item;
         }
         
         Destroy(itemObj);
         return null;
+    }
+
+    public void DestroyItem(GridItem item)
+    {
+        if (item != null)
+        {
+            NotifyItemDestroyed(item);
+            Destroy(item.gameObject);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 }
