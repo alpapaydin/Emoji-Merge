@@ -80,7 +80,7 @@ public class InputManager : MonoBehaviour
     private void TryStartDraggingItem(Vector2Int gridPosition)
     {
         var item = GridManager.Instance.GetItemAtCell(gridPosition);
-        if (item != null && item.IsReadyToMerge)
+        if (item != null && item.IsReadyToMerge && !item.IsPendingDestruction)
         {
             draggedItem = item;
             SetupDragPreview(item);

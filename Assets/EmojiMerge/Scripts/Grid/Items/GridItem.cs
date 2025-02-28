@@ -16,7 +16,7 @@ public class GridItem : MonoBehaviour
     protected SpriteRenderer spriteRenderer;
     protected GameObject tickMark;
     private bool isBeingMerged = false;
-    private bool isPendingDestruction = false;
+    protected bool isPendingDestruction = false;
     private HashSet<Order> markingOrders = new HashSet<Order>();
 
     public event Action<GridItem> OnItemDestroyed;
@@ -27,6 +27,7 @@ public class GridItem : MonoBehaviour
     public Vector2Int GridPosition => gridPosition;
     public bool CanMerge(GridItem other) => MergeManager.Instance.CanMergeItems(this, other);
     public bool IsMarkedForDelivery => markingOrders.Count > 0;
+    public bool IsPendingDestruction => isPendingDestruction;
     public IReadOnlyCollection<Order> MarkingOrders => markingOrders;
 
     protected virtual void Awake()
@@ -177,6 +178,7 @@ public class GridItem : MonoBehaviour
 
     public virtual void OnTapped() 
     { 
+        if (isPendingDestruction) return;
         UIManager.Instance.OpenItemDetailsPane(this);
     }
 

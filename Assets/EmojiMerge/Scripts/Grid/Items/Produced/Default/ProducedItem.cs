@@ -14,9 +14,4 @@ public class ProducedItem : BaseProducedItem
 
         base.Initialize(props, level);
     }
-
-    public override bool CanPerformAction()
-    {
-        return !isConsumed && IsReadyToMerge;
-    }
 }

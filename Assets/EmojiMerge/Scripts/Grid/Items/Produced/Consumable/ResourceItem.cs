@@ -18,6 +18,7 @@ public class ResourceItem : BaseProducedItem
     {
         base.OnTapped();
         if (!CanPerformAction()) return;
+        isPendingDestruction = true;
 
         switch (properties.itemType)
         {
@@ -29,7 +30,6 @@ public class ResourceItem : BaseProducedItem
                 break;
         }
 
-        isConsumed = true;
         ShowParticleEffect("consume");
         StartCoroutine(DestroyWithAnimation());
     }
