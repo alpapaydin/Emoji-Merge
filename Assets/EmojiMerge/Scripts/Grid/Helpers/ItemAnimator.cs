@@ -7,14 +7,31 @@ public class ItemAnimator : MonoBehaviour
     private const float POP_DURATION = 0.08f;
     private const float BOUNCE_DURATION = 0.15f;
     private const float BOUNCE_SCALE_RATIO = 1.3f;
+    private const int ANIMATION_SORTING_ORDER = 100;
     
     private Vector3 finalScale;
+    private SpriteRenderer spriteRenderer;
+    private int defaultSortingOrder;
+
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            defaultSortingOrder = spriteRenderer.sortingOrder;
+        }
+    }
 
     public void AnimateProduction(Vector3 startPos, Vector3 targetPos)
     {
         finalScale = transform.localScale;
         transform.position = startPos;
         transform.localScale = Vector3.zero;
+        
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sortingOrder = ANIMATION_SORTING_ORDER;
+        }
         
         StartCoroutine(ProductionAnimationSequence(startPos, targetPos));
     }
@@ -26,6 +43,11 @@ public class ItemAnimator : MonoBehaviour
         yield return StartCoroutine(MoveAnimation(startPos, targetPos, MOVE_DURATION));
         
         yield return StartCoroutine(BounceAnimation());
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.sortingOrder = defaultSortingOrder;
+        }
     }
 
     private IEnumerator MoveAnimation(Vector3 start, Vector3 end, float duration)

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 423ccf582e359ba48baae9e14e01471e, type: 3}
   m_Name: EnergyItem
   m_EditorClassIdentifier: 
-  itemType: 3
-  itemName: Coins
+  itemType: 2
+  itemName: Energy
   levelSprites:
   - {fileID: 21300000, guid: a229accd11ee93042acb7f790338113b, type: 3}
   - {fileID: 21300000, guid: b9de66c1d359beb4499c282a5824547b, type: 3}
