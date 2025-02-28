@@ -79,7 +79,6 @@ public class ChestItem : ContainerItem
         {
             unlockProgress += Time.deltaTime;
             
-            // Notify on any progress change, not just whole numbers
             NotifyStateChanged();
             
             if (unlockProgress >= CurrentLevelData.rechargeTime)

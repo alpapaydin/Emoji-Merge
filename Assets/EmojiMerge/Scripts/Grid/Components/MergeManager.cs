@@ -40,6 +40,9 @@ public class MergeManager : MonoBehaviour
         sourceItem.SetMergeState(true);
         targetItem.SetMergeState(true);
 
+        sourceItem.MarkForDestruction();
+        targetItem.MarkForDestruction();
+
         Vector2Int sourcePos = sourceItem.GridPosition;
         Vector2Int targetPos = targetItem.GridPosition;
 
@@ -62,9 +65,6 @@ public class MergeManager : MonoBehaviour
         {
             sourceItem.SetMergeState(false);
             targetItem.SetMergeState(false);
-            
-            GridManager.Instance.TryPlaceItemInCell(sourcePos, sourceItem);
-            GridManager.Instance.TryPlaceItemInCell(targetPos, targetItem);
             return null;
         }
     }

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Order
 {
+    public event System.Action<Order> OnItemsUpdated;
     public OrderData data;
     private Dictionary<(BaseItemProperties itemDef, int level), int> remainingItems;
     private List<GridItem> markedItems = new List<GridItem>();
@@ -13,6 +14,7 @@ public class Order
 
     public bool CanBeCompleted => canBeCompleted;
     public Sprite CustomerSprite => customerSprite;
+    public bool IsCompleted => remainingItems.Count == 0;
 
     public Order(OrderData orderData, Sprite sprite)
     {
@@ -26,31 +28,59 @@ public class Order
         remainingItems = new Dictionary<(BaseItemProperties itemDef, int level), int>();
         foreach (var requirement in data.requiredItems)
         {
-            remainingItems[(requirement.itemDefinition, requirement.level)] = requirement.count;
+            if (requirement.itemDefinition != null)
+            {
+                remainingItems[(requirement.itemDefinition, requirement.level)] = requirement.count;
+            }
         }
     }
 
-    public bool IsCompleted => remainingItems.Count == 0;
+    public void ClearMarkedItems()
+    {
+        foreach (var item in markedItems.ToList())
+        {
+            if (item != null)
+            {
+                item.RemoveOrderMark(this);
+            }
+        }
+        markedItems.Clear();
+        UpdateCompletionStatus();
+    }
 
-    public bool TrySubmitItem(GridItem item)
+    public bool AddMarkedItem(GridItem item)
     {
         if (item == null) return false;
-        
+
         var key = (item.properties, item.CurrentLevel);
-        if (remainingItems.TryGetValue(key, out int remaining))
+        if (!remainingItems.ContainsKey(key)) return false;
+
+        int currentCount = markedItems.Count(x => 
+            x != null && 
+            x.properties == key.Item1 && 
+            x.CurrentLevel == key.Item2);
+
+        if (currentCount >= remainingItems[key]) return false;
+
+        if (item.AddOrderMark(this))
         {
-            remaining--;
-            if (remaining <= 0)
-            {
-                remainingItems.Remove(key);
-            }
-            else
-            {
-                remainingItems[key] = remaining;
-            }
+            markedItems.Add(item);
+            OnItemsUpdated?.Invoke(this);
+            UpdateCompletionStatus();
             return true;
         }
         return false;
+    }
+
+    public void OnMarkedItemDestroyed(GridItem item)
+    {
+        if (markedItems.Remove(item))
+        {
+            canBeCompleted = false;
+            UpdateCompletionStatus();
+            
+            TryMarkAvailableItems();
+        }
     }
 
     public IReadOnlyDictionary<(BaseItemProperties itemDef, int level), int> GetRemainingItems()
@@ -58,85 +88,145 @@ public class Order
         return remainingItems;
     }
 
-    public void ClearMarkedItems()
-    {
-        foreach (var item in markedItems)
-        {
-            if (item != null)
-            {
-                item.IsMarkedForDelivery = false;
-            }
-        }
-        markedItems.Clear();
-    }
-
-    public void AddMarkedItem(GridItem item)
-    {
-        if (!markedItems.Contains(item))
-        {
-            markedItems.Add(item);
-            item.IsMarkedForDelivery = true;
-        }
-    }
-
-    private void OnItemDestroyed(GridItem item)
-    {
-        markedItems.Remove(item);
-    }
-
     public IReadOnlyList<GridItem> GetMarkedItems()
     {
-        return markedItems;
+        return markedItems.Where(x => x != null).ToList();
     }
 
-    public void OnItemChanged(GridItem item)
+    public bool TryMarkAvailableItems()
     {
-        if (item == null) return;
+        if (GridManager.Instance == null) return false;
+        bool statusChanged = false;
+        bool wasComplete = canBeCompleted;
+        var unavailableItems = new HashSet<GridItem>();
+        var currentlyMarkedItems = new HashSet<GridItem>(markedItems);
 
-        var key = (item.properties, item.CurrentLevel);
-        if (remainingItems.ContainsKey(key))
+        foreach (var item in currentlyMarkedItems)
         {
-            UpdateCompletionStatus();
+            if (!IsItemNeededForCompletion(item))
+            {
+                item.RemoveOrderMark(this);
+                statusChanged = true;
+            }
         }
+
+        foreach (var requirement in remainingItems)
+        {
+            var key = requirement.Key;
+            int neededCount = requirement.Value;
+
+            var currentMarkedForType = markedItems.Where(x => 
+                x != null && 
+                x.properties == key.Item1 && 
+                x.CurrentLevel == key.Item2).ToList();
+            
+            int currentCount = currentMarkedForType.Count;
+            
+            if (currentCount >= neededCount) continue;
+
+            var availableItems = GridManager.Instance.FindItemsWithLevel(key.Item1.itemType, key.Item2)
+                .Where(item => item != null && !unavailableItems.Contains(item))
+                .OrderBy(item => item.IsMarkedForDelivery)
+                .ToList();
+
+            foreach (var item in availableItems)
+            {
+                if (currentCount >= neededCount) break;
+
+                if (currentMarkedForType.Contains(item)) continue;
+
+                if (AddMarkedItemWithoutNotify(item))
+                {
+                    currentCount++;
+                    statusChanged = true;
+                }
+                else
+                {
+                    unavailableItems.Add(item);
+                }
+            }
+        }
+
+        UpdateCompletionStatus();
+        bool completionChanged = wasComplete != canBeCompleted;
+        
+        if (statusChanged || completionChanged)
+        {
+            OnItemsUpdated?.Invoke(this);
+        }
+
+        return statusChanged || completionChanged;
     }
 
     public void UpdateCompletionStatus()
     {
-        ClearMarkedItems();
-
-        canBeCompleted = CanFulfillRequirements();
+        bool wasComplete = canBeCompleted;
+        canBeCompleted = CheckAllRequirementsmet();
+        
+        if (wasComplete != canBeCompleted || !canBeCompleted)
+        {
+            OnItemsUpdated?.Invoke(this);
+        }
     }
 
-    private bool CanFulfillRequirements()
+    private bool CheckAllRequirementsmet()
     {
-        Dictionary<(BaseItemProperties, int), List<GridItem>> availableItems = new Dictionary<(BaseItemProperties, int), List<GridItem>>();
-
-        foreach (var requirement in data.requiredItems)
+        foreach (var requirement in remainingItems)
         {
-            var key = (requirement.itemDefinition, requirement.level);
-            var items = GridManager.Instance.FindItemsWithLevel(requirement.itemDefinition.itemType, requirement.level)
-                .Where(item => !item.IsMarkedForDelivery)
-                .ToList();
+            var key = requirement.Key;
+            int neededCount = requirement.Value;
 
-            if (items.Count < requirement.count)
-            {
+            int markedCount = markedItems.Count(item => 
+                item != null && 
+                item.properties == key.Item1 && 
+                item.CurrentLevel == key.Item2);
+
+            if (markedCount < neededCount)
                 return false;
-            }
-
-            availableItems[key] = items;
         }
-
-        foreach (var requirement in data.requiredItems)
-        {
-            var key = (requirement.itemDefinition, requirement.level);
-            var items = availableItems[key];
-
-            for (int i = 0; i < requirement.count; i++)
-            {
-                AddMarkedItem(items[i]);
-            }
-        }
-
         return true;
+    }
+
+    public bool RequiresItem(BaseItemProperties itemDef, int level)
+    {
+        return remainingItems.ContainsKey((itemDef, level));
+    }
+
+    private bool AddMarkedItemWithoutNotify(GridItem item)
+    {
+        if (item == null) return false;
+
+        var key = (item.properties, item.CurrentLevel);
+        if (!remainingItems.ContainsKey(key)) return false;
+
+        int currentCount = markedItems.Count(x => 
+            x != null && 
+            x.properties == key.Item1 && 
+            x.CurrentLevel == key.Item2);
+
+        if (currentCount >= remainingItems[key]) return false;
+
+        if (item.AddOrderMark(this))
+        {
+            markedItems.Add(item);
+            return true;
+        }
+        return false;
+    }
+
+    private bool IsItemNeededForCompletion(GridItem item)
+    {
+        if (item == null) return false;
+
+        var key = (item.properties, item.CurrentLevel);
+        if (!remainingItems.ContainsKey(key)) return false;
+
+        int neededCount = remainingItems[key];
+        int currentCount = markedItems.Count(x => 
+            x != null && 
+            x.properties == key.Item1 && 
+            x.CurrentLevel == key.Item2);
+
+        return currentCount <= neededCount;
     }
 }

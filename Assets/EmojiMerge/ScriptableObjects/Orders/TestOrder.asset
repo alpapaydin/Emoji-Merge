@@ -18,5 +18,5 @@ MonoBehaviour:
   - itemDefinition: {fileID: 11400000, guid: 8e4972eca33809545951f541ecf4bec9, type: 2}
     level: 3
     count: 2
-  goldReward: 0
+  goldReward: 7
   energyReward: 0

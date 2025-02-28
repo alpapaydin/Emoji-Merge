@@ -34,8 +34,8 @@ public class OrderManager : MonoBehaviour
                 itemManager = FindObjectOfType<ItemManager>();
             }
             
-            itemManager.OnGridItemCreated += OnItemChanged;
-            itemManager.OnGridItemDestroyed += OnItemChanged;
+            itemManager.OnGridItemCreated += OnItemCreated;
+            itemManager.OnGridItemDestroyed += OnItemDestroyed;
         }
         else
         {
@@ -52,8 +52,8 @@ public class OrderManager : MonoBehaviour
 
         if (itemManager != null)
         {
-            itemManager.OnGridItemCreated -= OnItemChanged;
-            itemManager.OnGridItemDestroyed -= OnItemChanged;
+            itemManager.OnGridItemCreated -= OnItemCreated;
+            itemManager.OnGridItemDestroyed -= OnItemDestroyed;
         }
     }
 
@@ -67,21 +67,80 @@ public class OrderManager : MonoBehaviour
         currentOrders.RemoveAll(order => order.IsCompleted);
     }
 
-    private void OnItemChanged(GridItem item)
+    private void OnItemCreated(GridItem item)
     {
-        foreach (var order in currentOrders)
+        if (item == null) return;
+
+        var needingOrders = currentOrders.Where(order => 
+            !order.CanBeCompleted && 
+            order.RequiresItem(item.properties, item.CurrentLevel)).ToList();
+
+        var otherOrders = currentOrders.Where(order => 
+            order.CanBeCompleted && 
+            order.RequiresItem(item.properties, item.CurrentLevel)).ToList();
+
+        foreach (var order in needingOrders)
         {
-            bool wasCompletable = order.CanBeCompleted;
-            order.OnItemChanged(item);
-            
-            if (!wasCompletable && order.CanBeCompleted)
+            bool statusChanged = order.TryMarkAvailableItems();
+            if (statusChanged)
             {
                 OnOrderCanBeCompleted?.Invoke(order);
             }
-            else if (wasCompletable && !order.CanBeCompleted)
+        }
+
+        foreach (var order in otherOrders)
+        {
+            bool statusChanged = order.TryMarkAvailableItems();
+            if (statusChanged)
             {
-                order.ClearMarkedItems();
+                OnOrderCanBeCompleted?.Invoke(order);
             }
+        }
+    }
+
+    private void OnItemDestroyed(GridItem item)
+    {
+        if (item == null) return;
+
+        var affectedOrders = item.MarkingOrders.ToList();
+        
+        var otherPotentialOrders = currentOrders.Where(order => 
+            !affectedOrders.Contains(order) && 
+            order.RequiresItem(item.properties, item.CurrentLevel)).ToList();
+            
+        affectedOrders.AddRange(otherPotentialOrders);
+
+        foreach (var order in affectedOrders.Distinct())
+        {
+            bool wasComplete = order.CanBeCompleted;
+            order.ClearMarkedItems();
+            order.TryMarkAvailableItems();
+            
+            if (wasComplete != order.CanBeCompleted)
+            {
+                OnOrderCanBeCompleted?.Invoke(order);
+            }
+        }
+    }
+
+    private void OnItemChanged(GridItem item)
+    {
+        var affectedOrders = currentOrders.Where(order => 
+            item == null ||
+            order.CanBeCompleted ||
+            order.RequiresItem(item.properties, item.CurrentLevel)).ToList();
+
+        foreach (var order in affectedOrders)
+        {
+            order.ClearMarkedItems();
+        }
+
+        foreach (var order in affectedOrders)
+        {
+            order.TryMarkAvailableItems();
+            order.UpdateCompletionStatus();
+            
+            OnOrderCanBeCompleted?.Invoke(order);
         }
     }
 
@@ -97,13 +156,17 @@ public class OrderManager : MonoBehaviour
         {
             int randomIndex = UnityEngine.Random.Range(0, availableOrders.Count);
             OrderData selectedOrder = availableOrders[randomIndex];
-            print("Order added");
+            
             var order = new Order(selectedOrder, GetUniqueCustomerSprite());
             currentOrders.Add(order);
             usedOrders.Add(selectedOrder);
             lastOrderTime = Time.time;
-            OnOrderAdded?.Invoke(order);
+            
+            order.TryMarkAvailableItems();
             order.UpdateCompletionStatus();
+            
+            OnOrderAdded?.Invoke(order);
+            
             if (order.CanBeCompleted)
             {
                 OnOrderCanBeCompleted?.Invoke(order);
@@ -129,22 +192,55 @@ public class OrderManager : MonoBehaviour
         if (!order.CanBeCompleted || !currentOrders.Contains(order))
             return false;
 
-        foreach (var item in order.GetMarkedItems())
+        var itemsToDestroy = order.GetMarkedItems().ToList();
+        
+        if (itemsToDestroy.Count == 0)
+            return false;
+            
+        currentOrders.Remove(order);
+        OnOrderCompleted?.Invoke(order);
+        
+        var affectedOrders = currentOrders.Where(o => 
+            itemsToDestroy.Any(item => o.RequiresItem(item.properties, item.CurrentLevel))).ToList();
+            
+        order.ClearMarkedItems();
+
+        foreach (var item in itemsToDestroy)
         {
             if (item != null)
             {
+                foreach (var affectedOrder in affectedOrders)
+                {
+                    if (item.MarkingOrders.Contains(affectedOrder))
+                    {
+                        item.RemoveOrderMark(affectedOrder);
+                    }
+                }
                 itemManager.DestroyItem(item);
             }
         }
 
-        GameManager.Instance.AddCoins(order.data.goldReward);
-        if (order.data.energyReward > 0)
+        foreach (var affectedOrder in affectedOrders)
         {
-            GameManager.Instance.AddEnergy(order.data.energyReward);
+            affectedOrder.ClearMarkedItems();
+            affectedOrder.TryMarkAvailableItems();
+            affectedOrder.UpdateCompletionStatus();
+            
+            if (affectedOrder.CanBeCompleted)
+            {
+                OnOrderCanBeCompleted?.Invoke(affectedOrder);
+            }
         }
 
-        OnOrderCompleted?.Invoke(order);
-        currentOrders.Remove(order);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddCoins(order.data.goldReward);
+            if (order.data.energyReward > 0)
+            {
+                GameManager.Instance.AddEnergy(order.data.energyReward);
+            }
+        }
+
         return true;
     }
 

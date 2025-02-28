@@ -1,5 +1,8 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class GridItem : MonoBehaviour
@@ -11,26 +14,20 @@ public class GridItem : MonoBehaviour
     protected int currentLevel = 1;
     protected bool isReadyToMerge = true;
     protected SpriteRenderer spriteRenderer;
+    protected GameObject tickMark;
     private bool isBeingMerged = false;
-    private bool isMarkedForDelivery = false;
+    private bool isPendingDestruction = false;
+    private HashSet<Order> markingOrders = new HashSet<Order>();
+
+    public event Action<GridItem> OnItemDestroyed;
 
     public int CurrentLevel => currentLevel;
     public bool IsReadyToMerge => isReadyToMerge;
     public Cell OccupiedCell => occupiedCell;
     public Vector2Int GridPosition => gridPosition;
     public bool CanMerge(GridItem other) => MergeManager.Instance.CanMergeItems(this, other);
-    public bool IsMarkedForDelivery 
-    { 
-        get => isMarkedForDelivery;
-        set 
-        {
-            if (isMarkedForDelivery != value)
-            {
-                isMarkedForDelivery = value;
-                UpdateDeliveryVisual();
-            }
-        }
-    }
+    public bool IsMarkedForDelivery => markingOrders.Count > 0;
+    public IReadOnlyCollection<Order> MarkingOrders => markingOrders;
 
     protected virtual void Awake()
     {
@@ -39,6 +36,7 @@ public class GridItem : MonoBehaviour
         {
             Debug.LogError($"SpriteRenderer component missing on GridItem {gameObject.name}");
         }
+        tickMark = transform.Find("Mark")?.gameObject;
     }
 
     protected virtual void Start()
@@ -96,18 +94,85 @@ public class GridItem : MonoBehaviour
         }
     }
 
-    public void SetMergeState(bool isMerging)
+    public virtual void SetMergeState(bool isMerging)
     {
+        if (isMerging && !isBeingMerged)
+        {
+            isBeingMerged = true;
+            ClearAllMarks();
+        }
         isBeingMerged = isMerging;
+    }
+
+    public bool AddOrderMark(Order order)
+    {
+        if (!isPendingDestruction && !isBeingMerged)
+        {
+            if (markingOrders.Contains(order))
+                return true;
+
+            if (order.CanBeCompleted)
+                return false;
+
+            markingOrders.Add(order);
+            UpdateDeliveryVisual();
+            return true;
+        }
+        return false;
+    }
+
+    public bool RemoveOrderMark(Order order)
+    {
+        if (!markingOrders.Contains(order))
+            return false;
+
+        bool removed = markingOrders.Remove(order);
+        if (removed)
+        {
+            UpdateDeliveryVisual();
+            
+            var incompleteOrders = OrderManager.Instance.GetCurrentOrders()
+                .Where(o => o != order && 
+                       !o.CanBeCompleted && 
+                       o.RequiresItem(properties, currentLevel));
+                       
+            foreach (var otherOrder in incompleteOrders)
+            {
+                otherOrder.TryMarkAvailableItems();
+            }
+        }
+        return removed;
+    }
+
+    public void ClearAllMarks()
+    {
+        var orders = markingOrders.ToList();
+        foreach (var order in orders)
+        {
+            order.OnMarkedItemDestroyed(this);
+        }
+        markingOrders.Clear();
+        UpdateDeliveryVisual();
     }
 
     protected virtual void OnDestroy()
     {
+        var affectedOrders = markingOrders.ToList();
+        
+        markingOrders.Clear();
+        UpdateDeliveryVisual();
+        
+        foreach (var order in affectedOrders)
+        {
+            order.OnMarkedItemDestroyed(this);
+        }
+        
         if (occupiedCell != null && !isBeingMerged)
         {
-            IsMarkedForDelivery = false;
             GridManager.Instance?.ClearCell(gridPosition);
         }
+        
+        OnItemDestroyed?.Invoke(this);
     }
 
     public virtual void OnTapped() 
@@ -131,10 +196,9 @@ public class GridItem : MonoBehaviour
 
     protected virtual void UpdateDeliveryVisual()
     {
-        if (spriteRenderer != null)
+        if (tickMark != null)
         {
-            spriteRenderer.color = isMarkedForDelivery ? 
-                new Color(0.7f, 0.7f, 1f, 1f) : Color.white;
+            tickMark.SetActive(markingOrders.Any());
         }
     }
 
@@ -163,5 +227,14 @@ public class GridItem : MonoBehaviour
     protected void ShowParticleEffect(string effectType)
     {
         // particle spawn logic for "spawn", "merge", "ready"
+    }
+
+    public void MarkForDestruction()
+    {
+        if (!isPendingDestruction)
+        {
+            isPendingDestruction = true;
+            ClearAllMarks();
+        }
     }
 }

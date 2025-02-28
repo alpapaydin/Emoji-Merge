@@ -112,6 +112,8 @@ public class GridManager : MonoBehaviour
 
         if (force && cell.IsOccupied)
         {
+            var existingItem = cell.CurrentItem;
+            existingItem.MarkForDestruction();
             cell.ClearItem();
         }
 
@@ -124,6 +126,8 @@ public class GridManager : MonoBehaviour
     {
         if (Cells.TryGetValue(position, out var cell))
         {
+            var existingItem = cell.CurrentItem;
+            existingItem?.MarkForDestruction();
             cell.ClearItem();
         }
     }

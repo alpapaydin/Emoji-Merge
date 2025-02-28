@@ -241,6 +241,7 @@ public class ItemManager : MonoBehaviour
     {
         if (item != null)
         {
+            item.MarkForDestruction();
             NotifyItemDestroyed(item);
             Destroy(item.gameObject);
         }

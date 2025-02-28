@@ -47,3 +47,64 @@
     transition-duration: 1s;
     transition-timing-function: ease-out-bounce;
 }
+
+.unity-button {
+    background-color: rgb(180, 215, 102);
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;
+    transition-property: background-color, scale;
+    transition-duration: 0.2s, 0.2s;
+    transition-timing-function: ease, ease-out-bounce;
+    -unity-text-outline-width: 0;
+    -unity-text-outline-color: rgb(0, 0, 0);
+}
+
+.unity-button:hover {
+    background-color: rgba(192, 231, 105, 0.85);
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.unity-button:active {
+    background-color: rgba(126, 149, 74, 0.85);
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;
+    transition-property: translate, scale;
+    transition-timing-function: ease-out-bounce, ease-out-bounce;
+    transition-duration: 0.2s, 0.2s;
+    translate: 0 15px;
+    scale: 0.9 0.9;
+    transition-delay: 0s, 0s;
+}
