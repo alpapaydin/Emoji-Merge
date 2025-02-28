@@ -5,6 +5,8 @@
     -unity-text-outline-width: 1px;
     text-shadow: 15px 15px 1px rgb(0, 0, 0);
     font-size: 24px;
+    -unity-font: url("project://database/Assets/EmojiMerge/Assets/Fonts/LilitaOne-Regular.ttf?fileID=12800000&guid=d3069b9c701e24f4fb2daaab21a91fe4&type=3#LilitaOne-Regular");
+    -unity-font-definition: url("project://database/Assets/EmojiMerge/Assets/Fonts/LilitaOne-Regular%20SDF.asset?fileID=11400000&guid=9107c7e2eea639441ab36193f10bacc1&type=2#LilitaOne-Regular SDF");
 }
 
 .unity-progress-bar__progress {
@@ -67,6 +69,8 @@
     transition-timing-function: ease, ease-out-bounce;
     -unity-text-outline-width: 0;
     -unity-text-outline-color: rgb(0, 0, 0);
+    -unity-font-definition: url("project://database/Assets/EmojiMerge/Assets/Fonts/LilitaOne-Regular%20SDF.asset?fileID=11400000&guid=9107c7e2eea639441ab36193f10bacc1&type=2#LilitaOne-Regular SDF");
+    scale: 1 1;
 }
 
 .unity-button:hover {
@@ -83,8 +87,9 @@
     border-top-right-radius: 7px;
     border-bottom-right-radius: 7px;
     border-bottom-left-radius: 7px;
-    transition-property: background-color;
-    transition-duration: 0.2s;
+    transition-property: background-color, scale;
+    transition-duration: 0.2s, 0.1s;
+    scale: 1.05 1.05;
 }
 
 .unity-button:active {
@@ -102,9 +107,9 @@
     border-bottom-right-radius: 7px;
     border-bottom-left-radius: 7px;
     transition-property: translate, scale;
-    transition-timing-function: ease-out-bounce, ease-out-bounce;
-    transition-duration: 0.2s, 0.2s;
+    transition-timing-function: ease-out-bounce, ease;
+    transition-duration: 0.2s, 0.1s;
     translate: 0 15px;
-    scale: 0.9 0.9;
+    scale: 0.95 0.95;
     transition-delay: 0s, 0s;
 }

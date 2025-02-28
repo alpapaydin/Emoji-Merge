@@ -161,6 +161,7 @@ public class OrdersUI : MonoBehaviour
         if (completeButton != null)
         {
             completeButton.style.display = order.CanBeCompleted ? DisplayStyle.Flex : DisplayStyle.None;
+            completeButton.style.scale = order.CanBeCompleted ? StyleKeyword.Null : new StyleScale(new Scale(Vector2.zero));
         }
     }
 
