@@ -72,7 +72,6 @@ public class InputManager : MonoBehaviour
         lastTouchPosition = screenPosition;
         isDragging = false;
         dragStartGridPos = GetGridPosition(screenPosition);
-
         TryStartDraggingItem(dragStartGridPos);
         OnTouchStart?.Invoke(dragStartGridPos);
     }

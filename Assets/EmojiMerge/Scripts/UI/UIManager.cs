@@ -7,6 +7,8 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private ItemDetailsUI itemDetails;
     [SerializeField] private StatsUI stats;
+
+    public ItemDetailsUI ItemDetails => itemDetails;
     
     private static UIManager instance;
     public static UIManager Instance

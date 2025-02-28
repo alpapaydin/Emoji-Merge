@@ -216,7 +216,7 @@ public class OrderManager : MonoBehaviour
                         item.RemoveOrderMark(affectedOrder);
                     }
                 }
-                itemManager.DestroyItem(item);
+                DeliverItem(item);
             }
         }
 
@@ -242,6 +242,15 @@ public class OrderManager : MonoBehaviour
         }
 
         return true;
+    }
+
+    private void DeliverItem(GridItem item)
+    {
+        if (UIManager.Instance.ItemDetails.CurrentItem == item)
+        {
+            UIManager.Instance.CloseItemDetailsPane();
+        }
+        itemManager.DestroyItem(item);
     }
 
     public IReadOnlyList<Order> GetCurrentOrders()

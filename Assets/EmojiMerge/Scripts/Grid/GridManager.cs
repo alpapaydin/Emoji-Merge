@@ -70,6 +70,7 @@ public class GridManager : MonoBehaviour
         inputManager = inputObj.AddComponent<InputManager>();
         inputManager.Initialize(grid);
         inputManager.OnTouchEnd += CheckCellTapped;
+        inputManager.OnTouchStart += CheckCellTouchStart;
     }
 
     private void SetupMergeManager()
@@ -78,17 +79,31 @@ public class GridManager : MonoBehaviour
         mergeObj.AddComponent<MergeManager>();
     }
 
-    private void CheckCellTapped(Vector2Int position)
+    private bool IsValidItemPosition(Vector2Int position)
     {
-        if (position.x >= 0 && position.x < gridSize.x && 
-            position.y >= 0 && position.y < gridSize.y && 
-            IsCellOccupied(position))
+        return position.x >= 0 && position.x < gridSize.x && 
+                position.y >= 0 && position.y < gridSize.y && 
+                IsCellOccupied(position);
+    }
+
+    private void CheckCellTouchStart(Vector2Int position)
+    {
+        if (IsValidItemPosition(position))
         {
             var item = GetItemAtCell(position);
-            item?.OnTapped();
+            item?.OnTouchStart();
         } else
         {
             UIManager.Instance.CloseItemDetailsPane();
+        }
+    }
+
+    private void CheckCellTapped(Vector2Int position)
+    {
+        if (IsValidItemPosition(position))
+        {
+            var item = GetItemAtCell(position);
+            item?.OnTapped();
         }
     }
 

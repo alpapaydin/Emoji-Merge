@@ -20,6 +20,8 @@ public class ItemDetailsUI : MonoBehaviour
     private string[] progressDots = new string[] { "", ".", "..", "..." };
     private int currentDotIndex;
 
+    public GridItem CurrentItem { get; private set; }
+
     private void Awake()
     {
         rootElement = uiDocument.rootVisualElement.Q<VisualElement>("BottomBar");
@@ -49,6 +51,8 @@ public class ItemDetailsUI : MonoBehaviour
     public void ShowDetails(GridItem item)
     {
         UnsubscribeFromCurrentContainer();
+
+        CurrentItem = item;
         
         itemName.text = item.properties.itemName;
         itemLevel.text = $"Level: {item.CurrentLevel}";
@@ -78,6 +82,7 @@ public class ItemDetailsUI : MonoBehaviour
         {
             currentContainer.OnContainerStateChanged -= UpdateContainerStats;
             currentContainer = null;
+            CurrentItem = null;
         }
     }
 

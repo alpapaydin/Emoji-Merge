@@ -60,6 +60,7 @@ public class MergeManager : MonoBehaviour
         {
             itemManager.DestroyItem(sourceItem);
             itemManager.DestroyItem(targetItem);
+            UIManager.Instance.OpenItemDetailsPane(mergedItem);
             return mergedItem;
         }
         else

@@ -159,7 +159,6 @@ public class GridItem : MonoBehaviour
     protected virtual void OnDestroy()
     {
         var affectedOrders = markingOrders.ToList();
-        UIManager.Instance.CloseItemDetailsPane();
         markingOrders.Clear();
         UpdateDeliveryVisual();
         
@@ -177,6 +176,11 @@ public class GridItem : MonoBehaviour
     }
 
     public virtual void OnTapped() 
+    { 
+        if (isPendingDestruction) return;
+    }
+
+    public virtual void OnTouchStart() 
     { 
         if (isPendingDestruction) return;
         UIManager.Instance.OpenItemDetailsPane(this);
