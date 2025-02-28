@@ -13,10 +13,12 @@ public class OrderManager : MonoBehaviour
     [SerializeField] private Sprite[] customerSprites;
     [SerializeField] private int maxOrders = 3;
     [SerializeField] private float orderCooldown = 5f;
+    [SerializeField] private float checkCooldown = 5f;
     
     private List<Order> currentOrders = new List<Order>();
     private HashSet<OrderData> usedOrders = new HashSet<OrderData>();
     private float lastOrderTime;
+    private float lastCheckTime;
 
     public event Action<Order> OnOrderCanBeCompleted;
     public event Action<Order> OnOrderCompleted;
@@ -59,6 +61,9 @@ public class OrderManager : MonoBehaviour
 
     private void Update()
     {
+        if (Time.time - lastCheckTime < checkCooldown) return;
+        lastCheckTime = Time.time;
+
         if (currentOrders.Count < maxOrders && Time.time - lastOrderTime >= orderCooldown)
         {
             TryAddNewOrder();

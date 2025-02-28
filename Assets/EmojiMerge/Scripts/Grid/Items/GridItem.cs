@@ -15,6 +15,7 @@ public class GridItem : MonoBehaviour
     protected bool isReadyToMerge = true;
     protected SpriteRenderer spriteRenderer;
     protected GameObject tickMark;
+    protected GameObject mergeHighlight;
     private bool isBeingMerged = false;
     protected bool isPendingDestruction = false;
     private HashSet<Order> markingOrders = new HashSet<Order>();
@@ -38,6 +39,7 @@ public class GridItem : MonoBehaviour
             Debug.LogError($"SpriteRenderer component missing on GridItem {gameObject.name}");
         }
         tickMark = transform.Find("Mark")?.gameObject;
+        mergeHighlight = transform.Find("GlowMask")?.gameObject;
     }
 
     protected virtual void Start()
@@ -154,6 +156,22 @@ public class GridItem : MonoBehaviour
         }
         markingOrders.Clear();
         UpdateDeliveryVisual();
+    }
+
+    public void ShowMergeHighlight()
+    {
+        if (mergeHighlight != null)
+        {
+            mergeHighlight.SetActive(true);
+        }
+    }
+
+    public void ClearMergeHighlight()
+    {
+        if (mergeHighlight != null)
+        {
+            mergeHighlight.SetActive(false);
+        }
     }
 
     protected virtual void OnDestroy()

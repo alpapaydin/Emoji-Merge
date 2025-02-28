@@ -230,11 +230,24 @@ public class InputManager : MonoBehaviour
         {
             bool canMerge = draggedItem.CanMerge(targetItem);
             currentHoverTarget = targetItem;
+            HighlightMergePreview(canMerge);
             HighlightMergeTarget(canMerge);
         }
         else
         {
             currentHoverTarget = null;
+        }
+    }
+
+    private void HighlightMergePreview(bool isValid)
+    {
+        if (isValid)
+        {
+            dragPreview.color = validMergeHighlight;
+        }
+        else
+        {
+            dragPreview.color = invalidMergeHighlight;
         }
     }
 
@@ -250,10 +263,12 @@ public class InputManager : MonoBehaviour
                 {
                     targetRenderer.sprite = nextLevelSprite;
                     targetRenderer.color = new Color(1, 1, 1, 0.5f);
+                    currentHoverTarget.ShowMergeHighlight();
                 }
             }
             else
             {
+                currentHoverTarget.ClearMergeHighlight();
                 targetRenderer.color = invalidMergeHighlight;
             }
         }
@@ -263,9 +278,11 @@ public class InputManager : MonoBehaviour
     {
         if (currentHoverTarget != null)
         {
-            var targetRenderer = currentHoverTarget.GetComponent<SpriteRenderer>();
+            var targetRenderer = currentHoverTarget.GetComponent<SpriteRenderer>(); 
             targetRenderer.sprite = currentHoverTarget.GetComponent<GridItem>().properties.levelSprites[currentHoverTarget.CurrentLevel - 1];
             targetRenderer.color = Color.white;
+            dragPreview.color = Color.white;
+            currentHoverTarget.ClearMergeHighlight();
             currentHoverTarget = null;
         }
     }

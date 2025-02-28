@@ -163,6 +163,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: ab7a6614f083c674ba5a2adc81bb2de0, type: 3}
   maxOrders: 3
   orderCooldown: 5
+  checkCooldown: 5
 --- !u!4 &251087673
 Transform:
   m_ObjectHideFlags: 0
