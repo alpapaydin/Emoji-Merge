@@ -184,6 +184,13 @@ public class GridItem : MonoBehaviour
     { 
         if (isPendingDestruction) return;
         UIManager.Instance.OpenItemDetailsPane(this);
+        SoundManager.Instance.PlaySound("tapItem");
+    }
+
+    public virtual void OnDragStart() 
+    { 
+        if (isPendingDestruction) return;
+        SoundManager.Instance.PlaySound("dragStarted");
     }
 
     public virtual bool CanPerformAction()
@@ -232,7 +239,7 @@ public class GridItem : MonoBehaviour
 
     protected void ShowParticleEffect(string effectType)
     {
-        // particle spawn logic for "spawn", "merge", "ready"
+        ParticleManager.Instance?.SpawnParticle(effectType, transform.position);
     }
 
     public void MarkForDestruction()

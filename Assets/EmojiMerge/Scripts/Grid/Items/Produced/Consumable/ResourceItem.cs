@@ -24,13 +24,16 @@ public class ResourceItem : BaseProducedItem
         {
             case ItemType.Energy:
                 GameManager.Instance.AddEnergy(ResourceProperties.resourceAmounts[currentLevel - 1]);
+                ShowParticleEffect("getEnergy");
+                SoundManager.Instance.PlaySound("getEnergy");
                 break;
             case ItemType.Coin:
                 GameManager.Instance.AddCoins(Mathf.RoundToInt(ResourceProperties.resourceAmounts[currentLevel - 1]));
+                ShowParticleEffect("getGold");
+                SoundManager.Instance.PlaySound("getGold");
                 break;
         }
 
-        ShowParticleEffect("consume");
         StartCoroutine(DestroyWithAnimation());
     }
 

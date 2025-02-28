@@ -54,4 +54,9 @@ public class UIManager : MonoBehaviour
     {
         stats.UpdateEnergy(newEnergyValue);
     }
+
+    public void ShowEnergyWarning()
+    {
+        stats.ShowEnergyWarning();
+    }
 }

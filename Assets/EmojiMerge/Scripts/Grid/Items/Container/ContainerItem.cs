@@ -11,6 +11,7 @@ public abstract class ContainerItem : GridItem
     protected Dictionary<int, Dictionary<BaseItemProperties, int>> inventoryItemCounts = new Dictionary<int, Dictionary<BaseItemProperties, int>>();
     protected bool isRecharging = false;
     protected float rechargeProgress = 0f;
+    protected int spawnsSinceLastRecharge = 0;
     
     protected ContainerItemDefinition ContainerProperties => properties as ContainerItemDefinition;
     protected ContainerItemLevel CurrentLevelData => ContainerProperties.GetLevelData(currentLevel);
@@ -143,7 +144,7 @@ public abstract class ContainerItem : GridItem
         }
         else if (inventoryChanged)
         {
-            ShowParticleEffect("ready");
+            ParticleManager.Instance.AttachParticle("producerReady", gameObject);
         }
     }
 
@@ -153,7 +154,6 @@ public abstract class ContainerItem : GridItem
         {
             isRecharging = true;
             rechargeProgress = 0f;
-            ShowParticleEffect("recharge_start");
             NotifyStateChanged();
         }
     }
@@ -177,8 +177,9 @@ public abstract class ContainerItem : GridItem
     {
         isRecharging = false;
         rechargeProgress = 0f;
+        spawnsSinceLastRecharge = 0;
         FillInventory();
-        ShowParticleEffect("ready");
+        ParticleManager.Instance.AttachParticle("producerReady", gameObject);
         NotifyStateChanged();
     }
 
@@ -255,8 +256,12 @@ public abstract class ContainerItem : GridItem
 
     protected virtual void OnItemSpawned()
     {
+        ShowParticleEffect("itemSpawned");
+        SoundManager.Instance.PlaySound("itemSpawned", false, 1 + spawnsSinceLastRecharge * 0.1f);
+        spawnsSinceLastRecharge++;
         if (!isRecharging && HasEmptyInventorySlots())
         {
+            ParticleManager.Instance.StopAttachedParticles(gameObject, true);
             StartRecharge();
         }
     }

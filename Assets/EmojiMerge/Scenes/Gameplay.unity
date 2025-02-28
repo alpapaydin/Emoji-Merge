@@ -867,38 +867,56 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - name: merge
-    clip: {fileID: 0}
+  - name: itemMerged
+    clip: {fileID: 8300000, guid: ff8bcd7a72f004143882e3691f889d8e, type: 3}
     volume: 1
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: tapItem
     clip: {fileID: 0}
-    volume: 1
+    volume: 0.33
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: getEnergy
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 0a67ac0f292a39d45bdf739be2a44bf6, type: 3}
     volume: 1
     pitch: 1
     loop: 0
     source: {fileID: 0}
-  - name: getMoney
-    clip: {fileID: 0}
+  - name: getGold
+    clip: {fileID: 8300000, guid: 0a67ac0f292a39d45bdf739be2a44bf6, type: 3}
     volume: 1
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: newOrder
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 7c7306953b8dee046908779fdf4acae9, type: 3}
     volume: 1
     pitch: 1
     loop: 0
     source: {fileID: 0}
   - name: orderComplete
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: fec3d5d94829ff84fadc23c22170c45f, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: dragStarted
+    clip: {fileID: 8300000, guid: 94a576840d5376948a8584150f8d8574, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: itemSpawned
+    clip: {fileID: 8300000, guid: 94a576840d5376948a8584150f8d8574, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: openItemDetails
+    clip: {fileID: 8300000, guid: 7c7306953b8dee046908779fdf4acae9, type: 3}
     volume: 1
     pitch: 1
     loop: 0
@@ -921,21 +939,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   particles:
   - name: producerReady
-    prefab: {fileID: 0}
-    scale: 0
+    prefab: {fileID: 1790474297630161967, guid: 569b16ae946ebc74484f287ad218e4ed, type: 3}
+    scale: 1
     autoDestroy: 0
-  - name: resourceTapped
-    prefab: {fileID: 0}
-    scale: 0
-    autoDestroy: 1
+  - name: getGold
+    prefab: {fileID: 1606037771643845735, guid: 3ba8f65ee17b5af48b2c764667bcc757, type: 3}
+    scale: 1
+    autoDestroy: 0
   - name: itemSpawned
-    prefab: {fileID: 0}
-    scale: 0
+    prefab: {fileID: 1790474297630161967, guid: 55ec23cb31c66a4458803da6ccd2882a, type: 3}
+    scale: 1
     autoDestroy: 1
   - name: itemMerged
-    prefab: {fileID: 0}
-    scale: 0
+    prefab: {fileID: 1790474297630161967, guid: bea4d30bbcb8c0f42b19aaf96809d420, type: 3}
+    scale: 1
     autoDestroy: 1
+  - name: getEnergy
+    prefab: {fileID: 3063163235534325291, guid: 7a7f8c0f199607d4dabfb76375d64d7e, type: 3}
+    scale: 1
+    autoDestroy: 0
 --- !u!1 &2029428095
 GameObject:
   m_ObjectHideFlags: 0

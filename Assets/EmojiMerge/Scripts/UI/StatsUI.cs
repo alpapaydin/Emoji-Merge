@@ -10,6 +10,7 @@ public class StatsUI : MonoBehaviour
     private Label goldLabel;
     private ProgressBar energyProgress;
     private VisualElement energyTitle;
+    private VisualElement energyWarning;
     
     private float displayedEnergy, targetEnergy;
     private float displayedGold, targetGold;
@@ -28,6 +29,7 @@ public class StatsUI : MonoBehaviour
         goldLabel = root.Q<Label>("GoldLabel");
         energyProgress = root.Q<ProgressBar>("EnergyProgress");
         energyTitle = energyProgress?.Q<VisualElement>("unity-title");
+        energyWarning = root.Q<VisualElement>("EnergyWarning");
         
         if (goldLabel == null || energyProgress == null)
         {
@@ -67,6 +69,19 @@ public class StatsUI : MonoBehaviour
         {
             energyAnimation = StartCoroutine(AnimateEnergy());
         }
+    }
+
+    public void ShowEnergyWarning()
+    {
+        if (energyWarning.style.opacity.value == 0f)
+            StartCoroutine(AnimateEnergyWarning());
+    }
+
+    private IEnumerator AnimateEnergyWarning()
+    {
+        energyWarning.style.opacity = 1;
+        yield return new WaitForSeconds(1f);
+        energyWarning.style.opacity = 0;
     }
 
     private IEnumerator AnimateGold()

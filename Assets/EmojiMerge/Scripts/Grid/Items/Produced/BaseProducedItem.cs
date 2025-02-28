@@ -5,7 +5,7 @@ public abstract class BaseProducedItem : GridItem
     
     public override bool CanPerformAction()
     {
-        return IsReadyToMerge;
+        return IsReadyToMerge && !isPendingDestruction;
     }
 
     public override void Initialize(BaseItemProperties props, int level = 1)

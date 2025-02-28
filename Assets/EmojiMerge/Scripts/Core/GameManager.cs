@@ -53,7 +53,10 @@ public class GameManager : MonoBehaviour
 
     public bool HasEnoughEnergy(float amount)
     {
-        return currentEnergy >= amount;
+        bool hasEnough = currentEnergy >= amount;
+        if (!hasEnough)
+            ShowEnergyWarning();
+        return hasEnough;
     }
 
     public void ConsumeEnergy(float amount)
@@ -82,5 +85,10 @@ public class GameManager : MonoBehaviour
     public void UpdateUICoins()
     {
         UIManager.Instance.UpdateGold(currentCoins);
+    }
+
+    public void ShowEnergyWarning()
+    {
+        UIManager.Instance.ShowEnergyWarning();
     }
 }

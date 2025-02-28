@@ -43,6 +43,10 @@ public class GridManager : MonoBehaviour
         {
             Instance = null;
         }
+        
+        inputManager.OnTouchEnd -= CheckCellTapped;
+        inputManager.OnTouchStart -= CheckCellTouchStart;
+        inputManager.OnDragStarted -= CheckCellDragStart;
     }
 
     private void Start()
@@ -71,6 +75,7 @@ public class GridManager : MonoBehaviour
         inputManager.Initialize(grid);
         inputManager.OnTouchEnd += CheckCellTapped;
         inputManager.OnTouchStart += CheckCellTouchStart;
+        inputManager.OnDragStarted += CheckCellDragStart;
     }
 
     private void SetupMergeManager()
@@ -104,6 +109,15 @@ public class GridManager : MonoBehaviour
         {
             var item = GetItemAtCell(position);
             item?.OnTapped();
+        }
+    }
+
+    private void CheckCellDragStart(Vector2Int position)
+    {
+        if (IsValidItemPosition(position))
+        {
+            var item = GetItemAtCell(position);
+            item?.OnDragStart();
         }
     }
 

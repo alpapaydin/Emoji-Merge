@@ -7,6 +7,7 @@ public class InputManager : MonoBehaviour
 {
     public event Action<Vector2Int> OnTouchStart;
     public event Action<Vector2Int> OnTouchEnd;
+    public event Action<Vector2Int> OnDragStarted;
     public event Action<Vector2> OnTouchDrag;
 
     [Header("Drag and Drop Settings")]
@@ -106,6 +107,11 @@ public class InputManager : MonoBehaviour
         if (!IsDragThresholdExceeded(screenPosition) && !isDragging)
             return;
 
+        if (!isDragging)
+        {
+            OnDragStarted?.Invoke(dragStartGridPos);
+        }
+        
         isDragging = true;
         IsDragging = true;
         

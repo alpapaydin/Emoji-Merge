@@ -60,7 +60,7 @@ public class MergeManager : MonoBehaviour
         {
             itemManager.DestroyItem(sourceItem);
             itemManager.DestroyItem(targetItem);
-            UIManager.Instance.OpenItemDetailsPane(mergedItem);
+            ItemMerged(mergedItem);
             return mergedItem;
         }
         else
@@ -69,5 +69,12 @@ public class MergeManager : MonoBehaviour
             targetItem.SetMergeState(false);
             return null;
         }
+    }
+
+    private void ItemMerged(GridItem item)
+    {
+        UIManager.Instance.OpenItemDetailsPane(item);
+        ParticleManager.Instance.SpawnParticle("itemMerged", item.transform.position);
+        SoundManager.Instance.PlaySound("itemMerged");
     }
 }

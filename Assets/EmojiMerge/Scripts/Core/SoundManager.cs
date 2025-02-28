@@ -94,7 +94,7 @@ public class SoundManager : MonoBehaviour
         source.rolloffMode = AudioRolloffMode.Linear;
     }
 
-    public void PlaySound(string soundName, bool isUI = false)
+    public void PlaySound(string soundName, bool isUI = false, float pitchMultiplier = 1f)
     {
         if (!soundDictionary.TryGetValue(soundName, out Sound sound)) return;
 
@@ -113,7 +113,7 @@ public class SoundManager : MonoBehaviour
 
         audioSource.clip = sound.clip;
         audioSource.volume = sound.volume * (isUI ? uiVolume : sfxVolume) * masterVolume;
-        audioSource.pitch = sound.pitch;
+        audioSource.pitch = sound.pitch * pitchMultiplier;
         audioSource.loop = sound.loop;
         audioSource.Play();
 

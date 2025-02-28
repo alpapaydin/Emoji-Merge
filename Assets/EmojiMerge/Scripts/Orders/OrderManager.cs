@@ -166,7 +166,8 @@ public class OrderManager : MonoBehaviour
             order.UpdateCompletionStatus();
             
             OnOrderAdded?.Invoke(order);
-            
+            SoundManager.Instance.PlaySound("newOrder");
+
             if (order.CanBeCompleted)
             {
                 OnOrderCanBeCompleted?.Invoke(order);
@@ -199,6 +200,7 @@ public class OrderManager : MonoBehaviour
             
         currentOrders.Remove(order);
         OnOrderCompleted?.Invoke(order);
+        SoundManager.Instance.PlaySound("orderComplete");
         
         var affectedOrders = currentOrders.Where(o => 
             itemsToDestroy.Any(item => o.RequiresItem(item.properties, item.CurrentLevel))).ToList();

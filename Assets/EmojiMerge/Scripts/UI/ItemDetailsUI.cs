@@ -53,7 +53,6 @@ public class ItemDetailsUI : MonoBehaviour
         UnsubscribeFromCurrentContainer();
 
         CurrentItem = item;
-        
         itemName.text = item.properties.itemName;
         itemLevel.text = $"Level: {item.CurrentLevel}";
         itemIcon.style.backgroundImage = 
@@ -61,7 +60,8 @@ public class ItemDetailsUI : MonoBehaviour
         rootElement.style.scale = new StyleScale(new Scale(new Vector2(1f, 1f)));
 
         if (item is ContainerItem containerItem)
-        {    
+        {   
+
             currentContainer = containerItem;
             currentContainer.OnContainerStateChanged += UpdateContainerStats;
             ShowContainerStats(containerItem);
