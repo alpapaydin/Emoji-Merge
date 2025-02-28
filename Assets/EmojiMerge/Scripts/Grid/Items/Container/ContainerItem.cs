@@ -75,7 +75,7 @@ public abstract class ContainerItem : GridItem
         if (InputManager.IsDragging)
             return false;
             
-        if (CurrentLevelData.canSpawnItems)
+        if (CanSpawnItems())
         {
             bool hasItems = false;
             foreach (var levelItems in inventoryItemCounts.Values)
@@ -99,6 +99,11 @@ public abstract class ContainerItem : GridItem
         }
         
         return false;
+    }
+
+    protected virtual bool CanSpawnItems()
+    {
+        return CurrentLevelData.canSpawnItems;
     }
 
     protected bool HasEmptyInventorySlots()
@@ -190,7 +195,29 @@ public abstract class ContainerItem : GridItem
 
             if (capacity.itemDefinition is ResourceItemProperties)
             {
-                newItem = ItemManager.Instance.CreateResourceItem(gridPosition, capacity.itemDefinition, capacity.level);
+                var emptyPos = GridManager.Instance.FindNearestEmptyCell(gridPosition);
+                if (!emptyPos.HasValue) return;
+
+                GameObject itemObj = ItemManager.Instance.CreateGridItemBase($"{capacity.itemDefinition.itemType} Item");
+                if (itemObj == null) return;
+
+                ResourceItem item = itemObj.AddComponent<ResourceItem>();
+                ItemAnimator animator = itemObj.AddComponent<ItemAnimator>();
+                item.Initialize(capacity.itemDefinition, capacity.level);
+                
+                if (GridManager.Instance.TryPlaceItemInCell(emptyPos.Value, item))
+                {
+                    var cell = GridManager.Instance.Cells[emptyPos.Value];
+                    cell.SetItem(item);
+                    item.SetGridPosition(emptyPos.Value, cell);
+                    animator.AnimateProduction(transform.position, cell.transform.position);
+                    ItemManager.Instance.NotifyItemCreated(item);
+                    newItem = item;
+                }
+                else
+                {
+                    Destroy(itemObj);
+                }
             }
             else if (capacity.itemDefinition is ProducedItemProperties)
             {

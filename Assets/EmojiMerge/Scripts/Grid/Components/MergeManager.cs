@@ -52,7 +52,8 @@ public class MergeManager : MonoBehaviour
         GridItem mergedItem = ItemManager.Instance.CreateMergedItem(
             mergePosition,
             sourceItem.properties.itemType,
-            sourceItem.CurrentLevel + 1
+            sourceItem.CurrentLevel + 1,
+            sourceItem.properties
         );
 
         if (mergedItem != null)

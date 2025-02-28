@@ -1,9 +1,7 @@
 using UnityEngine;
 
-public class ProducedItem : GridItem
-{
-    protected bool isConsumed = false;
-    
+public class ProducedItem : BaseProducedItem
+{    
     private ProducedItemProperties ProducedProperties => properties as ProducedItemProperties;
 
     public override void Initialize(BaseItemProperties props, int level = 1)
@@ -15,7 +13,6 @@ public class ProducedItem : GridItem
         }
 
         base.Initialize(props, level);
-        ShowParticleEffect("spawn");
     }
 
     public override bool CanPerformAction()

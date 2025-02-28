@@ -42,11 +42,14 @@ public class ItemManager : MonoBehaviour
         CreateProducedItem(new Vector2Int(3, 3), 2);
         
         CreateProducerItem(new Vector2Int(1, 1), 3);
-        CreateProducerItem(new Vector2Int(1, 2), 4);
+        CreateProducerItem(new Vector2Int(1, 2), 3);
         CreateProducerItem(new Vector2Int(1, 3), 5);
+
+        CreateChestItem(new Vector2Int(2, 1), 1);
+        CreateChestItem(new Vector2Int(3, 1), 1);
     }
 
-    private void NotifyItemCreated(GridItem item)
+    public void NotifyItemCreated(GridItem item)
     {
         OnGridItemCreated?.Invoke(item);
     }
@@ -56,7 +59,7 @@ public class ItemManager : MonoBehaviour
         OnGridItemDestroyed?.Invoke(item);
     }
 
-    private GameObject CreateGridItemBase(string name)
+    public GameObject CreateGridItemBase(string name)
     {
         if (gridItemPrefab == null)
         {
@@ -155,7 +158,7 @@ public class ItemManager : MonoBehaviour
         return null;
     }
 
-    public GridItem CreateMergedItem(Vector2Int gridPosition, ItemType type, int level)
+    public GridItem CreateMergedItem(Vector2Int gridPosition, ItemType type, int level, BaseItemProperties sourceProperties = null)
     {
         GameObject itemObj = CreateGridItemBase($"Merged {type} Item");
         if (itemObj == null) return null;
@@ -170,7 +173,15 @@ public class ItemManager : MonoBehaviour
             case ItemType.Energy:
             case ItemType.Coin:
                 item = itemObj.AddComponent<ResourceItem>();
-                item.Initialize(type == ItemType.Energy ? energyProperties : coinProperties, level);
+                item.Initialize(sourceProperties ?? (type == ItemType.Energy ? energyProperties : coinProperties), level);
+                break;
+            case ItemType.Producer:
+                item = itemObj.AddComponent<ProducerItem>();
+                item.Initialize(producerProperties, level);
+                break;
+            case ItemType.Chest:
+                item = itemObj.AddComponent<ChestItem>();
+                item.Initialize(chestProperties, level);
                 break;
         }
 

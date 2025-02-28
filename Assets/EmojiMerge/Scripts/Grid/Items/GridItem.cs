@@ -158,7 +158,7 @@ public class GridItem : MonoBehaviour
     protected virtual void OnDestroy()
     {
         var affectedOrders = markingOrders.ToList();
-        
+        UIManager.Instance.CloseItemDetailsPane();
         markingOrders.Clear();
         UpdateDeliveryVisual();
         

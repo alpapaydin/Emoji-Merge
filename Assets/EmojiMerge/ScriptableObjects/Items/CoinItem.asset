@@ -10,10 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 423ccf582e359ba48baae9e14e01471e, type: 3}
-  m_Name: ResourceItemProperties
+  m_Name: CoinItem
   m_EditorClassIdentifier: 
-  itemType: 0
-  itemName: 
-  levelSprites: []
+  itemType: 3
+  itemName: Coins
+  levelSprites:
+  - {fileID: 21300000, guid: ddbad536664830e4999054b1ddef288c, type: 3}
+  - {fileID: 21300000, guid: ea47890e0b648a94b8b6e28d09ba1839, type: 3}
+  - {fileID: 21300000, guid: 4a01cc17a185cb3499db590df7ad9fb5, type: 3}
   maxLevel: 3
-  resourceAmounts: 000000000000000000000000
+  resourceAmounts:
+  - 2
+  - 5
+  - 20

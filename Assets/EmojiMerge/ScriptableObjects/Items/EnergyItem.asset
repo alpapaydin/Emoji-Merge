@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 423ccf582e359ba48baae9e14e01471e, type: 3}
+  m_Name: EnergyItem
+  m_EditorClassIdentifier: 
+  itemType: 3
+  itemName: Coins
+  levelSprites:
+  - {fileID: 21300000, guid: a229accd11ee93042acb7f790338113b, type: 3}
+  - {fileID: 21300000, guid: b9de66c1d359beb4499c282a5824547b, type: 3}
+  - {fileID: 21300000, guid: 09cc55789d523bf40a5e1849b1ad13a6, type: 3}
+  maxLevel: 3
+  resourceAmounts:
+  - 3
+  - 7
+  - 25

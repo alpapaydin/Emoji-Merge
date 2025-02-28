@@ -6,6 +6,7 @@ public class ChestItem : ContainerItem
     private bool isLocked = true;
     private float unlockProgress = 0f;
     private bool isUnlocking = false;
+    private bool canSpawnItems = false;
     
     public bool IsLocked => isLocked;
     public float UnlockProgress => unlockProgress / CurrentLevelData.rechargeTime;
@@ -30,7 +31,7 @@ public class ChestItem : ContainerItem
         if (!base.CanPerformAction())
             return false;
 
-        return !isLocked;
+        return !isLocked && canSpawnItems;
     }
 
     public override void OnTapped()
@@ -94,6 +95,8 @@ public class ChestItem : ContainerItem
         isLocked = false;
         unlockProgress = CurrentLevelData.rechargeTime;
         ShowParticleEffect("ready");
+        canSpawnItems = true;
+        FillInventory();
         NotifyStateChanged();
     }
 
@@ -101,5 +104,10 @@ public class ChestItem : ContainerItem
     {
         UpdateUnlock();
         base.Update();
+    }
+
+    protected override bool CanSpawnItems()
+    {
+        return canSpawnItems;
     }
 }

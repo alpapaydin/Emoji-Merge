@@ -13,8 +13,38 @@ MonoBehaviour:
   m_Name: ChestItemProperties
   m_EditorClassIdentifier: 
   itemType: 1
-  itemName: 
-  levelSprites: []
+  itemName: Chest
+  levelSprites:
+  - {fileID: 21300000, guid: 658efaa845f4c81469934f51797b6d34, type: 3}
+  - {fileID: 21300000, guid: 64b2cdfb00246ca45be640f1956cfd76, type: 3}
+  - {fileID: 21300000, guid: f987f5415d9f74149a900ee3f0bced54, type: 3}
   maxLevel: 3
-  capacity: 0
-  rechargeTime: 60
+  energyCost: 0
+  levels:
+  - rechargeTime: 60
+    itemCapacities:
+    - itemDefinition: {fileID: 11400000, guid: 17c316ad05ababc4ebd29325221998ab, type: 2}
+      level: 1
+      count: 2
+    - itemDefinition: {fileID: 11400000, guid: af552e3e2b8857f4b8cd396da6bde904, type: 2}
+      level: 1
+      count: 1
+    canSpawnItems: 0
+  - rechargeTime: 5
+    itemCapacities:
+    - itemDefinition: {fileID: 11400000, guid: 17c316ad05ababc4ebd29325221998ab, type: 2}
+      level: 2
+      count: 3
+    - itemDefinition: {fileID: 11400000, guid: af552e3e2b8857f4b8cd396da6bde904, type: 2}
+      level: 2
+      count: 2
+    canSpawnItems: 0
+  - rechargeTime: 5
+    itemCapacities:
+    - itemDefinition: {fileID: 11400000, guid: 17c316ad05ababc4ebd29325221998ab, type: 2}
+      level: 3
+      count: 5
+    - itemDefinition: {fileID: 11400000, guid: af552e3e2b8857f4b8cd396da6bde904, type: 2}
+      level: 3
+      count: 3
+    canSpawnItems: 0
