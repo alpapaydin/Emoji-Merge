@@ -23,3 +23,9 @@ MonoBehaviour:
   ChestProperties:
   - {fileID: 11400000, guid: 60b93c3121903dd49a2c99e0d9d18b3f, type: 2}
   ChestProbability: 1
+  possibleOrders:
+  - {fileID: 11400000, guid: 5bfaa8375ed7bdf47889a0919796b2ae, type: 2}
+  - {fileID: 11400000, guid: c8a8b6e17ea3a9b4a84bb8edb202f647, type: 2}
+  maxOrders: 3
+  orderCooldown: 5
+  checkCooldown: 5

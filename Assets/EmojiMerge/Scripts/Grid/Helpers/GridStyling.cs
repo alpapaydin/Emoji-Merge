@@ -9,26 +9,56 @@ public class GridStyling : MonoBehaviour
     [SerializeField] private Color cellColor2 = new Color(0.9f, 0.9f, 0.9f);
     [SerializeField] private Sprite gridBackground;
     [SerializeField] private float backgroundScaleMultiplier = 0.5f;
-    [SerializeField] private SpriteRenderer backgroundRenderer;
+    private SpriteRenderer backgroundRenderer;
     private GridManager gridManager;
+    private GameObject backgroundObject;
 
     private void OnDestroy()
     {
-        gridManager.OnGridResized -= UpdateGridBackground;
+        if (gridManager != null)
+            gridManager.OnGridResized -= UpdateGridBackground;
+        
+        DestroyBackgroundRenderer();
     }
 
     private void UpdateGridBackground()
     {
+        CreateBackgroundRenderer();
+        
         backgroundRenderer.sprite = gridBackground;
-        backgroundRenderer.transform.localScale = new Vector2(gridManager.GridSize.x, gridManager.GridSize.y) * gridManager.GridScaleMultiplier * backgroundScaleMultiplier;
+        backgroundRenderer.transform.localScale = new Vector2(gridManager.GridSize.x, gridManager.GridSize.y) * backgroundScaleMultiplier;
         backgroundRenderer.transform.position = gridManager.transform.position +
             new Vector3(gridManager.GridSize.x * gridManager.GridScaleMultiplier.x / 2f, gridManager.GridSize.y * gridManager.GridScaleMultiplier.y / 2f, 0f);
+    }
+
+    private void DestroyBackgroundRenderer()
+    {
+        if (backgroundObject != null)
+        {
+            Destroy(backgroundObject);
+            backgroundObject = null;
+            backgroundRenderer = null;
+        }
+    }
+
+    private void CreateBackgroundRenderer()
+    {
+        DestroyBackgroundRenderer();
+        
+        backgroundObject = new GameObject("GridBackground");
+        backgroundObject.transform.SetParent(transform);
+        backgroundObject.transform.localPosition = Vector3.zero;
+        
+        backgroundRenderer = backgroundObject.AddComponent<SpriteRenderer>();
+        backgroundRenderer.sortingOrder = -1;
     }
 
     public void Initialize(GridManager manager)
     {
         gridManager = manager;
         gridManager.OnGridResized += UpdateGridBackground;
+        
+        UpdateGridBackground();
     }
 
     public Color GetCellColor(Vector2Int position)

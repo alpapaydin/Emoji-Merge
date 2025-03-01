@@ -19,10 +19,19 @@ public class OrderManager : MonoBehaviour
     private HashSet<OrderData> usedOrders = new HashSet<OrderData>();
     private float lastOrderTime;
     private float lastCheckTime;
+    private bool isInitialized;
 
     public event Action<Order> OnOrderCanBeCompleted;
     public event Action<Order> OnOrderCompleted;
     public event Action<Order> OnOrderAdded;
+
+    public void Initialize(RandomLevelData levelData)
+    {
+        possibleOrders = levelData.possibleOrders;
+        maxOrders = levelData.maxOrders;
+        orderCooldown = levelData.orderCooldown;
+        isInitialized = true;
+    }
 
     private void Awake()
     {
@@ -61,6 +70,7 @@ public class OrderManager : MonoBehaviour
 
     private void Update()
     {
+        if (!isInitialized) return;
         if (Time.time - lastCheckTime < checkCooldown) return;
         lastCheckTime = Time.time;
 

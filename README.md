@@ -2,7 +2,7 @@
 
 A merge-style game where you fulfill orders by combining emoji items and selling them to cats. The game features a grid-based board, energy management system, and item production/merging mechanics.
 
-<img src="preview.png" alt="Preview" width="400"/>
+<center><img src="preview.png" alt="Preview" width="400"/></center>
 (9:16 Portrait Aspect is Recommended)
 
 ## Game Overview

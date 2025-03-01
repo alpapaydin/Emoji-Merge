@@ -7,18 +7,17 @@ public class GridManager : MonoBehaviour
 {
     public static GridManager Instance { get; private set; }
 
-    [SerializeField] private RandomLevelData randomLevelData;
-
+    [SerializeField] private GameObject cellPrefab;
     [Header("Grid Settings")]
     [SerializeField] private Grid grid;
     [SerializeField] private Vector2Int gridSize = new Vector2Int(9, 9);
-    [SerializeField] private GridInitializer gridInitializer;
     [SerializeField] private GridStyling gridStyling;
     [SerializeField] private ItemManager itemManager;
     [SerializeField] private Vector4 gridMargins = new Vector4(0.1f, 0.1f, 0.1f, 0.1f);
 
     
     private InputManager inputManager;
+    private RandomLevelData levelData;
     
     public Vector2 GridScaleMultiplier {get; private set;} = new Vector2(1f, 1f);
     public Dictionary<Vector2Int, Cell> Cells = new Dictionary<Vector2Int, Cell>();
@@ -48,37 +47,24 @@ public class GridManager : MonoBehaviour
             Instance = null;
         }
         
-        inputManager.OnTouchEnd -= CheckCellTapped;
-        inputManager.OnTouchStart -= CheckCellTouchStart;
-        inputManager.OnDragStarted -= CheckCellDragStart;
+        if (inputManager != null)
+        {
+            inputManager.OnTouchEnd -= CheckCellTapped;
+            inputManager.OnTouchStart -= CheckCellTouchStart;
+            inputManager.OnDragStarted -= CheckCellDragStart;
+        }
     }
 
-    private void Start()
+    public void Initialize(RandomLevelData newLevelData)
     {
-        if (randomLevelData != null)
-        {
-            gridSize = LevelGenerator.GetRandomGridSize(randomLevelData);
-        }
-
+        levelData = newLevelData;
         SetupInputManager();
         SetupMergeManager();
-
-        if (gridInitializer != null)
-            gridInitializer.InitializeGrid(grid, gridSize);
-            
-        if (gridStyling != null)
-            gridStyling.Initialize(this);
-            
-        GridLayoutManager.PositionAndScaleGridWithPercentageMargins(grid, gridSize, gridMargins.x, gridMargins.y, gridMargins.z, gridMargins.w);
-        GridScaleMultiplier = grid.transform.localScale;
-        OnGridResized?.Invoke();
+        InitializeGrid();
+        SetupGridStyling();
+        SetupGridLayout();
+        SpawnGridItems();
         OnGridInitialized?.Invoke();
-
-        if (randomLevelData != null)
-            LevelGenerator.GenerateRandomLevel(randomLevelData, gridSize, itemManager);
-        else
-            itemManager.SpawnTestItems();
-
     }
 
     private void SetupInputManager()
@@ -96,6 +82,31 @@ public class GridManager : MonoBehaviour
         GameObject mergeObj = new GameObject("Grid Merge Manager");
         mergeObj.AddComponent<MergeManager>();
     }
+
+    private void InitializeGrid()
+    {
+        gridSize = LevelGenerator.GetRandomGridSize(levelData);
+        CreateCells();
+    }
+
+    private void SetupGridStyling()
+    {
+        if (gridStyling != null)
+            gridStyling.Initialize(this);
+    }
+
+    private void SetupGridLayout()
+    {
+        GridLayoutManager.PositionAndScaleGridWithPercentageMargins(grid, gridSize, gridMargins.x, gridMargins.y, gridMargins.z, gridMargins.w);
+        GridScaleMultiplier = grid.transform.localScale;
+        OnGridResized?.Invoke();
+    }
+
+    private void SpawnGridItems()
+    {
+        LevelGenerator.GenerateRandomLevel(levelData, gridSize, itemManager);
+    }
+
 
     private bool IsValidItemPosition(Vector2Int position)
     {
@@ -162,6 +173,23 @@ public class GridManager : MonoBehaviour
         cell.SetItem(item);
         item.SetGridPosition(position, cell);
         return true;
+    }
+
+    private void CreateCells()
+    {
+        for (int x = 0; x < gridSize.x; x++)
+        {
+            for (int y = 0; y < gridSize.y; y++)
+            {
+                Vector3 cellPosition = grid.GetCellCenterLocal(new Vector3Int(x, y, 0));
+                GameObject cellObject = Instantiate(cellPrefab, grid.transform);
+                cellObject.transform.localPosition = cellPosition;
+                cellObject.name = $"Cell ({x}, {y})";
+                Cell cell = cellObject.GetComponent<Cell>();
+                cell.Initialize(new Vector2Int(x, y));
+                Cells.Add(new Vector2Int(x, y), cell);
+            }
+        }
     }
 
     public void ClearCell(Vector2Int position)
