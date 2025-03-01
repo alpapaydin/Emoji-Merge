@@ -74,5 +74,9 @@ public class Cell : MonoBehaviour
         cellBlocker.SetActive(false);
         isCellBlocked = false;
         ParticleManager.Instance.SpawnParticle("cellUnblocked", transform.position);
+        if (currentItem != null)
+        {
+            currentItem.ItemUnblocked();
+        }
     }
 }

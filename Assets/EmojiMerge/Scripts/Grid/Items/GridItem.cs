@@ -240,18 +240,6 @@ public class GridItem : MonoBehaviour
         return null;
     }
 
-    public virtual GridItem MergeWith(GridItem other, Vector2Int mergePosition)
-    {
-        SetMergeState(true);
-        if (other != null)
-        {
-            other.SetMergeState(true);
-        }
-        
-        ShowParticleEffect("merge");
-        return MergeManager.Instance.PerformMerge(this, other, mergePosition);
-    }
-
     protected void ShowParticleEffect(string effectType)
     {
         ParticleManager.Instance?.SpawnParticle(effectType, transform.position);
@@ -276,5 +264,10 @@ public class GridItem : MonoBehaviour
                 cell.UnblockCell();
             }
         }
+    }
+
+    public void ItemUnblocked()
+    {
+        OrderManager.Instance.OnItemUnblocked(this);
     }
 }

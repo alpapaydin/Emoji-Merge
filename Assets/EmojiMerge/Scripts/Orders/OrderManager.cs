@@ -86,6 +86,11 @@ public class OrderManager : MonoBehaviour
         currentOrders.RemoveAll(order => order.IsCompleted);
     }
 
+    public void OnItemUnblocked(GridItem item)
+    {
+        OnItemCreated(item);
+    }
+
     private void OnItemCreated(GridItem item)
     {
         if (item == null) return;

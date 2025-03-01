@@ -272,7 +272,7 @@ public class GridManager : MonoBehaviour
         return null;
     }
 
-    public List<GridItem> FindItemsWithLevel(ItemType type, int level)
+    public List<GridItem> FindItemsWithLevel(ItemType type, int level, bool includeBlocked = false)
     {
         List<GridItem> items = new List<GridItem>();
         foreach (var cell in Cells.Values)
@@ -281,7 +281,8 @@ public class GridManager : MonoBehaviour
                 cell.CurrentItem.properties.itemType == type && 
                 cell.CurrentItem.CurrentLevel == level)
             {
-                items.Add(cell.CurrentItem);
+                if (includeBlocked || !cell.IsCellBlocked)
+                    items.Add(cell.CurrentItem);
             }
         }
         return items;
