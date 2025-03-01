@@ -22,4 +22,4 @@ MonoBehaviour:
   ProducedItemProbability: 10
   ChestProperties:
   - {fileID: 11400000, guid: 60b93c3121903dd49a2c99e0d9d18b3f, type: 2}
-  ChestProbability: 2
+  ChestProbability: 1
