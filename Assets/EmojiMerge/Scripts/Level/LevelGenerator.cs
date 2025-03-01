@@ -34,19 +34,19 @@ public static class LevelGenerator
                 {
                     ProducerItemProperties producerItemProperties = randomLevelData.ProducerProperties[Random.Range(0, randomLevelData.ProducerProperties.Length)];
                     int level = Random.Range(1, producerItemProperties.maxLevel);
-                    itemManager.CreateProducerItem(new Vector2Int(x, y), level);
+                    itemManager.CreateProducerItem(new Vector2Int(x, y), level, producerItemProperties);
                 }
                 else if (randomValue < normalizedProducerProb + normalizedProducedItemProb)
                 {
                     ProducedItemProperties producedItemProperties = randomLevelData.ProducedItemProperties[Random.Range(0, randomLevelData.ProducedItemProperties.Length)];
                     int level = Random.Range(1, producedItemProperties.maxLevel);
-                    itemManager.CreateProducedItem(new Vector2Int(x, y), level);
+                    itemManager.CreateProducedItem(new Vector2Int(x, y), level, producedItemProperties);
                 }
                 else
                 {
                     ChestItemProperties chestItemProperties = randomLevelData.ChestProperties[Random.Range(0, randomLevelData.ChestProperties.Length)];
                     int level = Random.Range(1, chestItemProperties.maxLevel);
-                    itemManager.CreateChestItem(new Vector2Int(x, y), level);
+                    itemManager.CreateChestItem(new Vector2Int(x, y), level, chestItemProperties);
                 }
             }
         }

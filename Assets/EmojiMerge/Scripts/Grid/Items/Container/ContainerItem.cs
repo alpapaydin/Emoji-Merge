@@ -220,9 +220,9 @@ public abstract class ContainerItem : GridItem
                     Destroy(itemObj);
                 }
             }
-            else if (capacity.itemDefinition is ProducedItemProperties)
+            else if (capacity.itemDefinition is ProducedItemProperties producedItemProperties)
             {
-                newItem = ItemManager.Instance.CreateProducedItemWithAnimation(gridPosition, capacity.level, transform.position);
+                newItem = ItemManager.Instance.CreateProducedItemWithAnimation(gridPosition, capacity.level, transform.position, producedItemProperties);
             }
 
             if (newItem != null)

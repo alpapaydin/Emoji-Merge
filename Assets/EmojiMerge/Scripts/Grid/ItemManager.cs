@@ -8,11 +8,6 @@ public class ItemManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private GameObject itemsContainer;
 
-    [Header("Item Properties")]
-    [SerializeField] private ProducerItemProperties producerProperties;
-    [SerializeField] private ProducedItemProperties producedItemProperties;
-    [SerializeField] private ChestItemProperties chestProperties;
-
     [Header("Prefabs")]
     [SerializeField] private GameObject gridItemPrefab;
 
@@ -29,22 +24,6 @@ public class ItemManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-
-    public void SpawnTestItems()
-    {
-        CreateProducedItem(new Vector2Int(2, 2), 1);
-        CreateProducedItem(new Vector2Int(3, 2), 1);
-        CreateProducedItem(new Vector2Int(4, 2), 1);
-        CreateProducedItem(new Vector2Int(2, 3), 2);
-        CreateProducedItem(new Vector2Int(3, 3), 2);
-        
-        CreateProducerItem(new Vector2Int(1, 1), 3);
-        CreateProducerItem(new Vector2Int(1, 2), 3);
-        CreateProducerItem(new Vector2Int(1, 3), 5);
-
-        CreateChestItem(new Vector2Int(2, 1), 1);
-        CreateChestItem(new Vector2Int(3, 1), 1);
     }
 
     public void NotifyItemCreated(GridItem item)
@@ -78,7 +57,7 @@ public class ItemManager : MonoBehaviour
         return itemObj;
     }
 
-    public GridItem CreateProducedItem(Vector2Int gridPosition, int level)
+    public GridItem CreateProducedItem(Vector2Int gridPosition, int level, ProducedItemProperties producedItemProperties)
     {
         var emptyPos = GridManager.Instance.FindNearestEmptyCell(gridPosition);
         if (!emptyPos.HasValue || !GridManager.Instance.Cells.ContainsKey(emptyPos.Value)) 
@@ -103,7 +82,7 @@ public class ItemManager : MonoBehaviour
         return null;
     }
 
-    public GridItem CreateProducedItemWithAnimation(Vector2Int gridPosition, int level, Vector3 startPosition)
+    public GridItem CreateProducedItemWithAnimation(Vector2Int gridPosition, int level, Vector3 startPosition, ProducedItemProperties producedItemProperties)
     {
         var emptyPos = GridManager.Instance.FindNearestEmptyCell(gridPosition);
         if (!emptyPos.HasValue || !GridManager.Instance.Cells.ContainsKey(emptyPos.Value)) 
@@ -200,7 +179,7 @@ public class ItemManager : MonoBehaviour
         return null;
     }
 
-    public GridItem CreateProducerItem(Vector2Int gridPosition, int level = 1)
+    public GridItem CreateProducerItem(Vector2Int gridPosition, int level = 1, ProducerItemProperties producerProperties = null)
     {
         var emptyPos = GridManager.Instance.FindNearestEmptyCell(gridPosition);
         if (!emptyPos.HasValue || !GridManager.Instance.Cells.ContainsKey(emptyPos.Value)) 
@@ -225,7 +204,7 @@ public class ItemManager : MonoBehaviour
         return null;
     }
 
-    public GridItem CreateChestItem(Vector2Int gridPosition, int level = 1)
+    public GridItem CreateChestItem(Vector2Int gridPosition, int level = 1, ChestItemProperties chestProperties = null)
     {
         var emptyPos = GridManager.Instance.FindNearestEmptyCell(gridPosition);
         if (!emptyPos.HasValue || !GridManager.Instance.Cells.ContainsKey(emptyPos.Value)) 

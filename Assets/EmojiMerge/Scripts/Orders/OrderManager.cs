@@ -9,18 +9,22 @@ public class OrderManager : MonoBehaviour
     public static OrderManager Instance { get; private set; }
 
     [SerializeField] private ItemManager itemManager;
-    [SerializeField] private OrderData[] possibleOrders;
     [SerializeField] private Sprite[] customerSprites;
-    [SerializeField] private int maxOrders = 3;
-    [SerializeField] private float orderCooldown = 5f;
     [SerializeField] private float checkCooldown = 5f;
     
+    
+    private OrderData[] possibleOrders;
+    private int maxOrders = 3;
+    private float orderCooldown = 5f;
     private List<Order> currentOrders = new List<Order>();
     private HashSet<OrderData> usedOrders = new HashSet<OrderData>();
     private float lastOrderTime;
     private float lastCheckTime;
     private bool isInitialized;
+    private int ordersCompleted = 0;
 
+
+    public int OrdersCompleted => ordersCompleted;
     public event Action<Order> OnOrderCanBeCompleted;
     public event Action<Order> OnOrderCompleted;
     public event Action<Order> OnOrderAdded;
@@ -215,6 +219,7 @@ public class OrderManager : MonoBehaviour
             
         currentOrders.Remove(order);
         OnOrderCompleted?.Invoke(order);
+        ordersCompleted++;
         SoundManager.Instance.PlaySound("orderComplete");
         
         var affectedOrders = currentOrders.Where(o => 

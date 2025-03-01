@@ -5,6 +5,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "RandomLevelData", menuName = "Game/Levels/Random Level Data")]
 public class RandomLevelData : ScriptableObject
 {
+    [Header("Win Condition")]
+    public BaseWinConditionData winCondition;
+    
     [Header("Grid Data")]
     public Vector2Int MinGridSize;
     public Vector2Int MaxGridSize;

@@ -198,15 +198,23 @@ public class ParticleManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        foreach (var particleList in activeParticles.Values)
+        if (activeParticles != null)
         {
-            foreach (var particle in particleList)
+            foreach (var particleList in activeParticles.Values)
             {
-                if (particle != null)
+                foreach (var particle in particleList)
                 {
-                    Destroy(particle.gameObject);
+                    if (particle != null)
+                    {
+                        Destroy(particle.gameObject);
+                    }
                 }
             }
+        }
+        
+        if (Instance == this)
+        {
+            Instance = null;
         }
     }
 }

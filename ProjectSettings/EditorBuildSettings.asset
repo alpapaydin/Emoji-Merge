@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/EmojiMerge/Scenes/Menu.unity
+    guid: a41e1b077a0746f4c8916f570b36905b
+  - enabled: 1
     path: Assets/EmojiMerge/Scenes/Gameplay.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   m_configObjects: {}

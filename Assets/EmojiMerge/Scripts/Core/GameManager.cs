@@ -1,14 +1,26 @@
 using UnityEngine;
+using System;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    public enum GameState
+    {
+        MainMenu,
+        Gameplay,
+        GameOver
+    }
 
+    public event Action<int> OnGoldEarned;
+
+    [SerializeField] private int levelIndex = 0;
+    [SerializeField] private LevelManager levelManager;
     [SerializeField] private float maxEnergy = 100f;
     [SerializeField] private float energyRechargeTime = 60f;
-    [SerializeField] private float currentEnergy;
-    [SerializeField] private int currentCoins;
-
+    
+    private GameState gameState = GameState.MainMenu;
+    private float currentEnergy;
+    private int currentCoins;
     private float lastEnergyRechargeTime;
 
     private void Awake()
@@ -17,12 +29,18 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            InitializeGame();
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+
+    public void StartGame()
+    {
+        levelManager.LoadLevel(levelIndex);
+        InitializeGame();
+        gameState = GameState.Gameplay;
     }
 
     private void InitializeGame()
@@ -34,7 +52,20 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        UpdateEnergyRecharge();
+        if (gameState == GameState.Gameplay)
+            UpdateEnergyRecharge();
+    }
+
+    public void WinGame()
+    {
+        gameState = GameState.GameOver;
+        print("Game Won");
+    }
+
+    public void LoseGame()
+    {
+        gameState = GameState.GameOver;
+        print("Game Lost");
     }
 
     private void UpdateEnergyRecharge()
@@ -75,20 +106,24 @@ public class GameManager : MonoBehaviour
     {
         currentCoins += amount;
         UpdateUICoins();
+        OnGoldEarned?.Invoke(amount);
     }
 
     public void UpdateUIEnergy()
     {
+        if (UIManager.Instance == null) return;
         UIManager.Instance.UpdateEnergy(Mathf.RoundToInt(currentEnergy));
     }
 
     public void UpdateUICoins()
     {
+        if (UIManager.Instance == null) return;
         UIManager.Instance.UpdateGold(currentCoins);
     }
 
     public void ShowEnergyWarning()
     {
+        if (UIManager.Instance == null) return;
         UIManager.Instance.ShowEnergyWarning();
     }
 }

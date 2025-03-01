@@ -25,6 +25,11 @@ public class StatsUI : MonoBehaviour
 
     private void Awake()
     {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("Start play from main menu!");
+            return;
+        }
         var root = uiDocument.rootVisualElement;
         goldLabel = root.Q<Label>("GoldLabel");
         energyProgress = root.Q<ProgressBar>("EnergyProgress");

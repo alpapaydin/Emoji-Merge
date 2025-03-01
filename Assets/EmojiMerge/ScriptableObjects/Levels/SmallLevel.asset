@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2553cf0f1046f6489bed8cd8c70af90, type: 3}
-  m_Name: RandomLevelData
+  m_Name: SmallLevel
   m_EditorClassIdentifier: 
-  winCondition: {fileID: 11400000, guid: f9528e377b09e3e4ba2d6abe11e93c4c, type: 2}
-  MinGridSize: {x: 5, y: 8}
-  MaxGridSize: {x: 8, y: 10}
+  winCondition: {fileID: 11400000, guid: be0cee8df8967f14bb81dcee42ba32de, type: 2}
+  MinGridSize: {x: 4, y: 4}
+  MaxGridSize: {x: 5, y: 5}
   ProducerProperties:
   - {fileID: 11400000, guid: 0943822dcd192ef4c9a2d86ce15705fa, type: 2}
   ProducerProbability: 1
