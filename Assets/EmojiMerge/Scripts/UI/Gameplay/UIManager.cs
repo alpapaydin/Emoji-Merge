@@ -8,7 +8,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private ItemDetailsUI itemDetails;
     [SerializeField] private StatsUI stats;
     [SerializeField] private WinConditionUI winCondition;
+    [SerializeField] private WinLosePopup winPopup;
 
+    public WinLosePopup WinPopup => winPopup;
     public ItemDetailsUI ItemDetails => itemDetails;
     public WinConditionUI WinCondition => winCondition;
     

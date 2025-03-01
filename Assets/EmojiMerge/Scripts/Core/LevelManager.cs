@@ -4,21 +4,24 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-    [SerializeField] private RandomLevelData[] allLevels;
 
+    [SerializeField] private RandomLevelData[] allLevels;
     private static RandomLevelData currentLevelData;
 
     public void LoadLevel(int levelIndex)
     {
         if (levelIndex >= 0 && levelIndex < allLevels.Length)
         {
-            currentLevelData = allLevels[levelIndex];
-            StartCoroutine(LoadLevelAsync());
+            RandomLevelData level = allLevels[levelIndex];
+            currentLevelData = level;
         }
         else
         {
-            Debug.LogError("Invalid level index!");
+            GameManager.Instance.ResetLevelIndex();
+            currentLevelData = allLevels[0];
         }
+        
+        StartCoroutine(LoadLevelAsync());
     }
 
     private IEnumerator LoadLevelAsync()

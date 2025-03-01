@@ -41,6 +41,17 @@ public class GameManager : MonoBehaviour
         levelManager.LoadLevel(levelIndex);
         InitializeGame();
     }
+
+    public void NextLevel()
+    {
+        levelIndex++;
+        StartGame();
+    }
+
+    public void ResetLevelIndex()
+    {
+        levelIndex = 0;
+    }
     
     private void InitializeGame()
     {
@@ -68,7 +79,8 @@ public class GameManager : MonoBehaviour
     public void WinGame()
     {
         gameState = GameState.GameOver;
-        print("Game Won");
+        if (UIManager.Instance != null)
+            UIManager.Instance.WinPopup.ShowWin();
     }
 
     public void LoseGame()
