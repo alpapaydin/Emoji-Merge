@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float maxEnergy = 100f;
     [SerializeField] private float energyRechargeTime = 60f;
     
+    private const string LEVEL_INDEX_KEY = "LevelIndex";
     private GameState gameState = GameState.MainMenu;
     private float currentEnergy;
     private int currentCoins;
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            LoadGameData();
         }
         else
         {
@@ -45,12 +47,14 @@ public class GameManager : MonoBehaviour
     public void NextLevel()
     {
         levelIndex++;
+        SaveLevelIndex();
         StartGame();
     }
 
     public void ResetLevelIndex()
     {
         levelIndex = 0;
+        SaveLevelIndex();
     }
     
     private void InitializeGame()
@@ -87,6 +91,20 @@ public class GameManager : MonoBehaviour
     {
         gameState = GameState.GameOver;
         print("Game Lost");
+    }
+
+    private void SaveLevelIndex()
+    {
+        PlayerPrefs.SetInt(LEVEL_INDEX_KEY, levelIndex);
+        PlayerPrefs.Save();
+    }
+
+    private void LoadGameData()
+    {
+        if (PlayerPrefs.HasKey(LEVEL_INDEX_KEY))
+        {
+            levelIndex = PlayerPrefs.GetInt(LEVEL_INDEX_KEY);
+        }
     }
 
     private void UpdateEnergyRecharge()
