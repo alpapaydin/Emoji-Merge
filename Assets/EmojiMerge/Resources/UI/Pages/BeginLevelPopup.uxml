@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/EmojiMerge/Resources/UI/UnityThemes/Styles.uss?fileID=7433441132597879392&amp;guid=2b686bebbe1d32e4288b051a44acfc01&amp;type=3#Styles" />
+    <ui:VisualElement name="Background" style="flex-grow: 1; transition-property: opacity; transition-duration: 0.5s; background-color: rgba(0, 0, 0, 0.69); opacity: 0; position: relative; left: auto;">
+        <ui:VisualElement name="PopupBox" style="flex-grow: 1; position: absolute; left: 10%; top: 40%; width: 80%; height: 20%; background-color: rgba(0, 0, 0, 0.88); border-top-left-radius: 15px; border-top-right-radius: 15px; border-bottom-right-radius: 15px; border-bottom-left-radius: 15px; border-left-color: rgba(255, 255, 255, 0.74); border-right-color: rgba(255, 255, 255, 0.74); border-top-color: rgba(255, 255, 255, 0.74); border-bottom-color: rgba(255, 255, 255, 0.74); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; align-self: auto; justify-content: center; align-items: center; transition-property: scale; transition-duration: 1s; transition-timing-function: ease-out-bounce; scale: 0 0;">
+            <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="WinText" class="ItemDetailText" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

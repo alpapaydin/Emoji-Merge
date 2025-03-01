@@ -40,14 +40,23 @@ public class GameManager : MonoBehaviour
     {
         levelManager.LoadLevel(levelIndex);
         InitializeGame();
-        gameState = GameState.Gameplay;
     }
-
+    
     private void InitializeGame()
     {
         currentEnergy = maxEnergy;
         currentCoins = 0;
         lastEnergyRechargeTime = Time.time;
+    }
+
+    public void SetGameStarted()
+    {
+        gameState = GameState.Gameplay;
+    }
+
+    public GameState GetGameState()
+    {
+        return gameState;
     }
 
     private void Update()
@@ -126,4 +135,5 @@ public class GameManager : MonoBehaviour
         if (UIManager.Instance == null) return;
         UIManager.Instance.ShowEnergyWarning();
     }
+
 }

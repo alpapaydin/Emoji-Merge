@@ -54,6 +54,8 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.GetGameState() != GameManager.GameState.Gameplay)
+            return;
         if (Input.GetMouseButtonDown(0))
         {
             HandleTouchStart(Input.mousePosition);

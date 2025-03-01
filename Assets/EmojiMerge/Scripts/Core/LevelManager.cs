@@ -39,6 +39,7 @@ public class LevelManager : MonoBehaviour
             OrderManager.Instance.Initialize(currentLevelData);
             WinManager winManager = new GameObject("WinManager").AddComponent<WinManager>();
             winManager.InitializeWinCondition(currentLevelData);
+            UIManager.Instance.WinCondition.ShowWinCondition(currentLevelData.winCondition);
         }
         else
         {

@@ -7,8 +7,10 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private ItemDetailsUI itemDetails;
     [SerializeField] private StatsUI stats;
+    [SerializeField] private WinConditionUI winCondition;
 
     public ItemDetailsUI ItemDetails => itemDetails;
+    public WinConditionUI WinCondition => winCondition;
     
     private static UIManager instance;
     public static UIManager Instance
