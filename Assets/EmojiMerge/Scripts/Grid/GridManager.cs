@@ -7,6 +7,9 @@ public class GridManager : MonoBehaviour
 {
     public static GridManager Instance { get; private set; }
 
+    [SerializeField] private RandomLevelData randomLevelData;
+
+    [Header("Grid Settings")]
     [SerializeField] private Grid grid;
     [SerializeField] private Vector2Int gridSize = new Vector2Int(9, 9);
     [SerializeField] private GridInitializer gridInitializer;
@@ -52,6 +55,11 @@ public class GridManager : MonoBehaviour
 
     private void Start()
     {
+        if (randomLevelData != null)
+        {
+            gridSize = LevelGenerator.GetRandomGridSize(randomLevelData);
+        }
+
         SetupInputManager();
         SetupMergeManager();
 
@@ -65,7 +73,11 @@ public class GridManager : MonoBehaviour
         GridScaleMultiplier = grid.transform.localScale;
         OnGridResized?.Invoke();
         OnGridInitialized?.Invoke();
-        itemManager.SpawnTestItems();
+
+        if (randomLevelData != null)
+            LevelGenerator.GenerateRandomLevel(randomLevelData, gridSize, itemManager);
+        else
+            itemManager.SpawnTestItems();
 
     }
 

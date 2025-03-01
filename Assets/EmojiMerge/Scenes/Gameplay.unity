@@ -740,6 +740,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e11c46259bb0be7488426c76f09c24ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  randomLevelData: {fileID: 11400000, guid: bf3996c53f0d8c749990dfd2e4bd9ecd, type: 2}
   grid: {fileID: 1509432004}
   gridSize: {x: 8, y: 10}
   gridInitializer: {fileID: 1509432006}

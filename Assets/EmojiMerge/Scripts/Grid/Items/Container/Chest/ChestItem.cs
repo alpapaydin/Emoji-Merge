@@ -91,6 +91,7 @@ public class ChestItem : ContainerItem
 
     private void CompleteUnlock()
     {
+        if (!isLocked) return;
         isUnlocking = false;
         isLocked = false;
         unlockProgress = CurrentLevelData.rechargeTime;
@@ -104,6 +105,13 @@ public class ChestItem : ContainerItem
     {
         UpdateUnlock();
         base.Update();
+    }
+
+    protected override void CompleteRecharge()
+    {
+        if (!isLocked) return;
+        isLocked = false;
+        base.CompleteRecharge();
     }
 
     protected override bool CanSpawnItems()

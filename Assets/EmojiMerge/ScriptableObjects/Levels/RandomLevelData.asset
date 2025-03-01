@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2553cf0f1046f6489bed8cd8c70af90, type: 3}
+  m_Name: RandomLevelData
+  m_EditorClassIdentifier: 
+  MinGridSize: {x: 5, y: 8}
+  MaxGridSize: {x: 8, y: 10}
+  ProducerProperties:
+  - {fileID: 11400000, guid: 0943822dcd192ef4c9a2d86ce15705fa, type: 2}
+  ProducerProbability: 1
+  ProducedItemProperties:
+  - {fileID: 11400000, guid: 8e4972eca33809545951f541ecf4bec9, type: 2}
+  ProducedItemProbability: 10
+  ChestProperties:
+  - {fileID: 11400000, guid: 60b93c3121903dd49a2c99e0d9d18b3f, type: 2}
+  ChestProbability: 2
