@@ -496,6 +496,8 @@ GameObject:
   - component: {fileID: 1604188407}
   - component: {fileID: 1604188406}
   - component: {fileID: 1604188405}
+  - component: {fileID: 1604188409}
+  - component: {fileID: 1604188410}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -588,6 +590,40 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!95 &1604188409
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604188404}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 840158bf88be68847bb945339bcdb566, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1604188410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604188404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbfd4df6a8e2df2498ee231facf1e51c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 1604188409}
 --- !u!1 &1711426891
 GameObject:
   m_ObjectHideFlags: 0
@@ -835,6 +871,24 @@ MonoBehaviour:
   - name: openItemDetails
     clip: {fileID: 8300000, guid: 7c7306953b8dee046908779fdf4acae9, type: 3}
     volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: logoAppear
+    clip: {fileID: 8300000, guid: 7c7306953b8dee046908779fdf4acae9, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: buttonAppear
+    clip: {fileID: 8300000, guid: 94a576840d5376948a8584150f8d8574, type: 3}
+    volume: 1
+    pitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: MenuBGM
+    clip: {fileID: 8300000, guid: a3e54bfde3d26ef408cf416bcf36cb54, type: 3}
+    volume: 0.6
     pitch: 1
     loop: 0
     source: {fileID: 0}
