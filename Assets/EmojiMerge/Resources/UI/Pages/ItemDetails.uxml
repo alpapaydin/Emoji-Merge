@@ -7,7 +7,7 @@
                 <ui:VisualElement name="ItemIcon" style="flex-grow: 0; height: 48px; width: 48px; background-image: url(&quot;project://database/Assets/EmojiMerge/Assets/Image/Items/pd_level1.png?fileID=21300000&amp;guid=f084b4cfc2a56cd4f831ca4bc85f1401&amp;type=3#pd_level1&quot;); justify-content: center; align-items: center; align-self: center;" />
                 <ui:VisualElement name="Spacer" style="flex-grow: 0.1; width: 5%;" />
                 <ui:VisualElement name="ItemDetails" style="flex-grow: 0; -unity-text-align: upper-center; justify-content: center; align-self: center; align-items: center;">
-                    <ui:Label tabindex="-1" text="Produced Item" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ItemName" class="ItemDetailText" style="-unity-text-align: upper-center; flex-shrink: 1; justify-content: center; flex-grow: 0;" />
+                    <ui:Label tabindex="-1" text="Produced Item" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ItemName" class="ItemDetailText" style="-unity-text-align: upper-left; flex-shrink: 1; justify-content: center; flex-grow: 0; align-self: flex-start;" />
                     <ui:Label tabindex="-1" text="Level 1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ItemLevel" class="ItemDetailText" style="-unity-text-align: upper-center; flex-shrink: 1; justify-content: center; flex-grow: 0; align-items: flex-start; align-self: flex-start;" />
                 </ui:VisualElement>
             </ui:VisualElement>
@@ -17,7 +17,7 @@
                     <ui:Instance template="ItemSlot" name="ItemSlot" />
                 </ui:VisualElement>
                 <ui:VisualElement name="Spacer" style="flex-grow: 0; height: 10%;" />
-                <ui:ProgressBar value="22" title="Producing..." name="ItemProgress" style="scale: 1 1; flex-shrink: 1; flex-grow: 0; width: 75%; align-self: center; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; justify-content: center; transform-origin: center; -unity-text-align: middle-center; white-space: nowrap;" />
+                <ui:ProgressBar value="22" title="Producing..." name="ItemProgress" style="scale: 1 1; flex-shrink: 1; flex-grow: 0; width: 75%; align-self: center; margin-top: 5px; margin-right: 5px; margin-bottom: 5px; margin-left: 5px; justify-content: center; transform-origin: center; -unity-text-align: middle-center; white-space: nowrap; -unity-font-definition: url(&quot;project://database/Assets/EmojiMerge/Assets/Fonts/LilitaOne-Regular%20SDF.asset?fileID=11400000&amp;guid=9107c7e2eea639441ab36193f10bacc1&amp;type=2#LilitaOne-Regular SDF&quot;); -unity-font: url(&quot;project://database/Assets/EmojiMerge/Assets/Fonts/LilitaOne-Regular.ttf?fileID=12800000&amp;guid=d3069b9c701e24f4fb2daaab21a91fe4&amp;type=3#LilitaOne-Regular&quot;); font-size: 19px; color: rgb(0, 0, 0); -unity-text-outline-width: 0.2px; -unity-text-outline-color: rgba(255, 255, 255, 0.87); text-shadow: 0 0 0 rgba(0, 0, 0, 0.88);" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

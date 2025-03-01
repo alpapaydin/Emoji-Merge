@@ -82,10 +82,11 @@ public class OrdersUI : MonoBehaviour
         orderItemElements.Add(order, new Dictionary<(BaseItemProperties, int), VisualElement>());
         
         var orderItemsContainer = orderElement.Q<VisualElement>("OrderItems");
+        var orderDetails = orderElement.Q<VisualElement>("OrderDetails");
         AddOrderItems(order, orderItemsContainer);
         
         ordersContainer.Add(orderElement);
-        StartCoroutine(AnimateOrder(customerFrame, orderItemsContainer));
+        StartCoroutine(AnimateOrder(customerFrame, orderDetails));
 
         order.OnItemsUpdated += (updatedOrder) => UpdateOrderItemsUI(updatedOrder);
     }

@@ -12,7 +12,8 @@ public class GridManager : MonoBehaviour
     [SerializeField] private GridInitializer gridInitializer;
     [SerializeField] private GridStyling gridStyling;
     [SerializeField] private ItemManager itemManager;
-    [SerializeField] private float gridPadding = 0.5f;
+    [SerializeField] private Vector4 gridMargins = new Vector4(0.1f, 0.1f, 0.1f, 0.1f);
+
     
     private InputManager inputManager;
     
@@ -60,7 +61,7 @@ public class GridManager : MonoBehaviour
         if (gridStyling != null)
             gridStyling.Initialize(this);
             
-        GridLayoutManager.PositionAndScaleGrid(grid, gridSize, gridPadding);
+        GridLayoutManager.PositionAndScaleGridWithPercentageMargins(grid, gridSize, gridMargins.x, gridMargins.y, gridMargins.z, gridMargins.w);
         GridScaleMultiplier = grid.transform.localScale;
         OnGridResized?.Invoke();
         OnGridInitialized?.Invoke();

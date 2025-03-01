@@ -10,8 +10,6 @@ public class ItemManager : MonoBehaviour
 
     [Header("Item Properties")]
     [SerializeField] private ProducerItemProperties producerProperties;
-    [SerializeField] private ResourceItemProperties energyProperties;
-    [SerializeField] private ResourceItemProperties coinProperties;
     [SerializeField] private ProducedItemProperties producedItemProperties;
     [SerializeField] private ChestItemProperties chestProperties;
 
@@ -160,6 +158,12 @@ public class ItemManager : MonoBehaviour
 
     public GridItem CreateMergedItem(Vector2Int gridPosition, ItemType type, int level, BaseItemProperties sourceProperties = null)
     {
+        if (sourceProperties == null)
+        {
+            Debug.LogError("Source properties are null!");
+            return null;
+        }
+
         GameObject itemObj = CreateGridItemBase($"Merged {type} Item");
         if (itemObj == null) return null;
 
@@ -168,25 +172,23 @@ public class ItemManager : MonoBehaviour
         {
             case ItemType.ProducedItem:
                 item = itemObj.AddComponent<ProducedItem>();
-                item.Initialize(producedItemProperties, level);
                 break;
             case ItemType.Energy:
             case ItemType.Coin:
                 item = itemObj.AddComponent<ResourceItem>();
-                item.Initialize(sourceProperties ?? (type == ItemType.Energy ? energyProperties : coinProperties), level);
                 break;
             case ItemType.Producer:
                 item = itemObj.AddComponent<ProducerItem>();
-                item.Initialize(producerProperties, level);
                 break;
             case ItemType.Chest:
                 item = itemObj.AddComponent<ChestItem>();
-                item.Initialize(chestProperties, level);
                 break;
         }
 
         if (item != null)
         {
+            item.Initialize(sourceProperties, level);
+
             if (GridManager.Instance.TryPlaceItemInCell(gridPosition, item, force: true))
             {
                 NotifyItemCreated(item);

@@ -21,6 +21,8 @@ public class GridStyling : MonoBehaviour
     {
         backgroundRenderer.sprite = gridBackground;
         backgroundRenderer.transform.localScale = new Vector2(gridManager.GridSize.x, gridManager.GridSize.y) * gridManager.GridScaleMultiplier * backgroundScaleMultiplier;
+        backgroundRenderer.transform.position = gridManager.transform.position +
+            new Vector3(gridManager.GridSize.x * gridManager.GridScaleMultiplier.x / 2f, gridManager.GridSize.y * gridManager.GridScaleMultiplier.y / 2f, 0f);
     }
 
     public void Initialize(GridManager manager)
