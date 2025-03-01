@@ -129,25 +129,67 @@ public class GridManager : MonoBehaviour
 
     private void CheckCellTapped(Vector2Int position)
     {
-        if (IsValidItemPosition(position))
-        {
-            var item = GetItemAtCell(position);
-            item?.OnTapped();
-        }
+        if (!CanInteractWithCell(position)) return;
+
+        var item = GetItemAtCell(position);
+        item?.OnTapped();
     }
 
     private void CheckCellDragStart(Vector2Int position)
     {
-        if (IsValidItemPosition(position))
-        {
-            var item = GetItemAtCell(position);
-            item?.OnDragStart();
-        }
+        if (!CanInteractWithCell(position)) return;
+        
+        var item = GetItemAtCell(position);
+        item?.OnDragStart();
+    }
+
+    private bool CanInteractWithCell(Vector2Int position)
+    {
+        return !IsCellBlocked(position) && IsValidItemPosition(position) && !IsItemPendingDestruction(position);
+    }
+
+
+    public bool IsItemPendingDestruction(Vector2Int position)
+    {
+        return IsValidItemPosition(position) && GetItemAtCell(position).IsPendingDestruction;
     }
 
     public bool IsCellOccupied(Vector2Int position)
     {
         return Cells.TryGetValue(position, out var cell) && cell.IsOccupied;
+    }
+
+    public bool IsCellBlocked(Vector2Int position)
+    {
+        return Cells.TryGetValue(position, out var cell) && cell.IsCellBlocked;
+    }
+
+    public Cell GetCell(Vector2Int position)
+    {
+        return Cells.TryGetValue(position, out var cell) ? cell : null;
+    }
+
+    public Cell[] GetAdjacentCells(Vector2Int position)
+    {
+        List<Cell> adjacentCells = new List<Cell>();
+        Vector2Int[] directions = new Vector2Int[]
+        {
+            Vector2Int.up,
+            Vector2Int.down,
+            Vector2Int.left,
+            Vector2Int.right
+        };
+
+        foreach (var direction in directions)
+        {
+            Vector2Int checkPos = position + direction;
+            if (Cells.TryGetValue(checkPos, out var cell))
+            {
+                adjacentCells.Add(cell);
+            }
+        }
+
+        return adjacentCells.ToArray();
     }
 
     public GridItem GetItemAtCell(Vector2Int position)
@@ -219,7 +261,7 @@ public class GridManager : MonoBehaviour
                     Vector2Int checkPos = new Vector2Int(position.x + x, position.y + y);
                     if (checkPos.x >= 0 && checkPos.x < gridSize.x && 
                         checkPos.y >= 0 && checkPos.y < gridSize.y &&
-                        !IsCellOccupied(checkPos) && Cells.ContainsKey(checkPos))
+                        !IsCellOccupied(checkPos) && !IsCellBlocked(checkPos) && Cells.ContainsKey(checkPos))
                     {
                         return checkPos;
                     }

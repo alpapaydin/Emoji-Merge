@@ -195,19 +195,16 @@ public class GridItem : MonoBehaviour
 
     public virtual void OnTapped() 
     { 
-        if (isPendingDestruction) return;
     }
 
     public virtual void OnTouchStart() 
     { 
-        if (isPendingDestruction) return;
         UIManager.Instance.OpenItemDetailsPane(this);
         SoundManager.Instance.PlaySound("tapItem");
     }
 
     public virtual void OnDragStart() 
     { 
-        if (isPendingDestruction) return;
         SoundManager.Instance.PlaySound("dragStarted");
     }
 
@@ -266,6 +263,18 @@ public class GridItem : MonoBehaviour
         {
             isPendingDestruction = true;
             ClearAllMarks();
+        }
+    }
+
+    public void UnblockAdjacentCells()
+    {
+        if (occupiedCell != null)
+        {
+            var adjacentCells = GridManager.Instance.GetAdjacentCells(occupiedCell.GridPosition);
+            foreach (var cell in adjacentCells)
+            {
+                cell.UnblockCell();
+            }
         }
     }
 }

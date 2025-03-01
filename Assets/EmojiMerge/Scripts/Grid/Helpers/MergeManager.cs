@@ -26,7 +26,9 @@ public class MergeManager : MonoBehaviour
     {
         if (item1 == null || item2 == null)
             return false;
-
+        if (item2.OccupiedCell.IsCellBlocked)
+            return false;
+        
         return item1.properties.itemType == item2.properties.itemType &&
                item1.CurrentLevel == item2.CurrentLevel &&
                item1.CurrentLevel < item1.properties.maxLevel;
@@ -76,5 +78,6 @@ public class MergeManager : MonoBehaviour
         UIManager.Instance.OpenItemDetailsPane(item);
         ParticleManager.Instance.SpawnParticle("itemMerged", item.transform.position);
         SoundManager.Instance.PlaySound("itemMerged");
+        item.UnblockAdjacentCells();
     }
 }

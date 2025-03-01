@@ -41,11 +41,10 @@ public class WinConditionUI : MonoBehaviour
 
     private IEnumerator AnimateWinPopup()
     {
-        yield return new WaitForSeconds(0.5f);
         background.style.opacity = 1;
         yield return new WaitForSeconds(0.3f);
         popupBox.style.scale = new StyleScale(new Scale(Vector2.one));
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1.0f);
         popupBox.style.scale = new StyleScale(new Scale(Vector2.one));
         yield return new WaitForSeconds(0.5f);
         background.style.opacity = 0;

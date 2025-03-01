@@ -54,20 +54,24 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.GetGameState() != GameManager.GameState.Gameplay)
-            return;
-        if (Input.GetMouseButtonDown(0))
+        
+        if (Input.GetMouseButtonDown(0) && CanInteract())
         {
             HandleTouchStart(Input.mousePosition);
         }
-        else if (Input.GetMouseButton(0))
+        else if (Input.GetMouseButton(0) && CanInteract())
         {
             HandleTouchDrag(Input.mousePosition);
         }
-        else if (Input.GetMouseButtonUp(0))
+        else if (Input.GetMouseButtonUp(0) && CanInteract())
         {
             HandleTouchEnd(Input.mousePosition);
         }
+    }
+
+    private bool CanInteract()
+    {
+        return (GameManager.Instance.GetGameState() == GameManager.GameState.Gameplay);
     }
 
     private void HandleTouchStart(Vector2 screenPosition)
@@ -81,6 +85,9 @@ public class InputManager : MonoBehaviour
 
     private void TryStartDraggingItem(Vector2Int gridPosition)
     {
+        var cell = GridManager.Instance.GetCell(gridPosition);
+        if (cell == null || cell.IsCellBlocked) return;
+
         var item = GridManager.Instance.GetItemAtCell(gridPosition);
         if (item != null && item.IsReadyToMerge && !item.IsPendingDestruction)
         {

@@ -929,6 +929,10 @@ MonoBehaviour:
     prefab: {fileID: 3063163235534325291, guid: 7a7f8c0f199607d4dabfb76375d64d7e, type: 3}
     scale: 1
     autoDestroy: 0
+  - name: cellUnblocked
+    prefab: {fileID: 1096072033734196986, guid: 0ebaafc2a6e362f4e95a5e7b24c4582d, type: 3}
+    scale: 1
+    autoDestroy: 0
 --- !u!114 &1964343487
 MonoBehaviour:
   m_ObjectHideFlags: 0

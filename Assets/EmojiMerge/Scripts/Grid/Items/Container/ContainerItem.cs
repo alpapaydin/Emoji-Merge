@@ -188,7 +188,7 @@ public abstract class ContainerItem : GridItem
         UpdateRecharge();
     }
 
-    protected virtual void SpawnSingleItem(ItemLevelCount capacity)
+    protected virtual bool SpawnSingleItem(ItemLevelCount capacity)
     {
         if (inventoryItemCounts[capacity.level][capacity.itemDefinition] > 0)
         {
@@ -197,10 +197,10 @@ public abstract class ContainerItem : GridItem
             if (capacity.itemDefinition is ResourceItemProperties)
             {
                 var emptyPos = GridManager.Instance.FindNearestEmptyCell(gridPosition);
-                if (!emptyPos.HasValue) return;
+                if (!emptyPos.HasValue) return false;
 
                 GameObject itemObj = ItemManager.Instance.CreateGridItemBase($"{capacity.itemDefinition.itemType} Item");
-                if (itemObj == null) return;
+                if (itemObj == null) return false;
 
                 ResourceItem item = itemObj.AddComponent<ResourceItem>();
                 ItemAnimator animator = itemObj.AddComponent<ItemAnimator>();
@@ -230,8 +230,10 @@ public abstract class ContainerItem : GridItem
                 inventoryItemCounts[capacity.level][capacity.itemDefinition]--;
                 OnItemSpawned();
                 NotifyStateChanged();
+                return true;
             }
         }
+        return false;
     }
 
     protected virtual ItemLevelCount? SelectItemToSpawn()

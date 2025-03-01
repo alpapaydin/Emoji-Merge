@@ -32,11 +32,15 @@ public class ProducerItem : ContainerItem
         base.OnTapped();
         if (!CanPerformAction()) return;
 
-        GameManager.Instance.ConsumeEnergy(ContainerProperties.energyCost);
         var selectedItem = SelectItemToSpawn();
         if (selectedItem.HasValue)
         {
-            SpawnSingleItem(selectedItem.Value);
+            bool isSpawned = SpawnSingleItem(selectedItem.Value);
+            if (isSpawned)
+            {
+                GameManager.Instance.ConsumeEnergy(ContainerProperties.energyCost);
+            }
         }
     }
+    
 }

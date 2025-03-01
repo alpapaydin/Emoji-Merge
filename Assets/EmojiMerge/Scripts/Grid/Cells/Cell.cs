@@ -6,7 +6,10 @@ public class Cell : MonoBehaviour
     private Vector2Int gridPosition;
     private SpriteRenderer spriteRenderer;
     private GridItem currentItem;
+    private bool isCellBlocked = false;
+    private GameObject cellBlocker;
 
+    public bool IsCellBlocked => isCellBlocked;
     public Vector2Int GridPosition => gridPosition;
     public GridItem CurrentItem => currentItem;
     public bool IsOccupied => currentItem != null;
@@ -14,12 +17,17 @@ public class Cell : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        cellBlocker = transform.Find("Obstacle").gameObject;
     }
 
     public void Initialize(Vector2Int position)
     {
         gridPosition = position;
         ApplyStyling();
+        if (gridPosition.y < 3)
+        {
+            BlockCell();
+        }
     }
 
     private void ApplyStyling()
@@ -52,5 +60,19 @@ public class Cell : MonoBehaviour
                 currentItem = null;
             }
         }
+    }
+
+    public void BlockCell()
+    {   
+        cellBlocker.SetActive(true);
+        isCellBlocked = true;
+    }
+
+    public void UnblockCell()
+    {
+        if (!isCellBlocked) return;
+        cellBlocker.SetActive(false);
+        isCellBlocked = false;
+        ParticleManager.Instance.SpawnParticle("cellUnblocked", transform.position);
     }
 }
