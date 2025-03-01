@@ -4,7 +4,7 @@
     -unity-text-outline-color: rgb(0, 0, 0);
     -unity-text-outline-width: 1px;
     text-shadow: 15px 15px 1px rgb(0, 0, 0);
-    font-size: 24px;
+    font-size: 48px;
     -unity-font: url("project://database/Assets/EmojiMerge/Resources/Fonts/LilitaOne-Regular.ttf?fileID=12800000&guid=d3069b9c701e24f4fb2daaab21a91fe4&type=3#LilitaOne-Regular");
     -unity-font-definition: url("project://database/Assets/EmojiMerge/Resources/Fonts/LilitaOne-Regular%20SDF.asset?fileID=11400000&guid=9107c7e2eea639441ab36193f10bacc1&type=2#LilitaOne-Regular SDF");
 }
@@ -71,6 +71,7 @@
     -unity-text-outline-color: rgb(0, 0, 0);
     -unity-font-definition: url("project://database/Assets/EmojiMerge/Resources/Fonts/LilitaOne-Regular%20SDF.asset?fileID=11400000&guid=9107c7e2eea639441ab36193f10bacc1&type=2#LilitaOne-Regular SDF");
     scale: 1 1;
+    font-size: 32px;
 }
 
 .unity-button:hover {
