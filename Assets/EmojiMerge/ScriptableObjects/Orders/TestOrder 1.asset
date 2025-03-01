@@ -16,10 +16,10 @@ MonoBehaviour:
   description: do some test stuff
   requiredItems:
   - itemDefinition: {fileID: 11400000, guid: 8e4972eca33809545951f541ecf4bec9, type: 2}
-    level: 3
+    level: 4
     count: 1
   - itemDefinition: {fileID: 11400000, guid: 8e4972eca33809545951f541ecf4bec9, type: 2}
-    level: 2
-    count: 2
-  goldReward: 5
+    level: 5
+    count: 1
+  goldReward: 10
   energyReward: 0

@@ -13,17 +13,25 @@ MonoBehaviour:
   m_Name: SmallLevel
   m_EditorClassIdentifier: 
   winCondition: {fileID: 11400000, guid: be0cee8df8967f14bb81dcee42ba32de, type: 2}
-  MinGridSize: {x: 4, y: 4}
-  MaxGridSize: {x: 5, y: 5}
+  MinGridSize: {x: 5, y: 5}
+  MaxGridSize: {x: 8, y: 8}
+  forcedSpawnItems:
+  - itemDefinition: {fileID: 11400000, guid: 0943822dcd192ef4c9a2d86ce15705fa, type: 2}
+    level: 4
+    count: 1
   ProducerProperties:
   - {fileID: 11400000, guid: 0943822dcd192ef4c9a2d86ce15705fa, type: 2}
   ProducerProbability: 1
+  MinProducerCount: 0
+  MaxProducerCount: 0
   ProducedItemProperties:
   - {fileID: 11400000, guid: 8e4972eca33809545951f541ecf4bec9, type: 2}
   ProducedItemProbability: 10
   ChestProperties:
   - {fileID: 11400000, guid: 60b93c3121903dd49a2c99e0d9d18b3f, type: 2}
   ChestProbability: 1
+  MinChestCount: 1
+  MaxChestCount: 2
   possibleOrders:
   - {fileID: 11400000, guid: 5bfaa8375ed7bdf47889a0919796b2ae, type: 2}
   - {fileID: 11400000, guid: c8a8b6e17ea3a9b4a84bb8edb202f647, type: 2}

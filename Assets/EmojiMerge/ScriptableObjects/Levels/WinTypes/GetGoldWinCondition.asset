@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1daefde83dd276b44aa3833ce1684845, type: 3}
   m_Name: GetGoldWinCondition
   m_EditorClassIdentifier: 
-  goldNeeded: 30
+  goldNeeded: 50

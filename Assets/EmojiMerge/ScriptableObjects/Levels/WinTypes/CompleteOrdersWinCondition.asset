@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 642dff8045a9a2a47aa1659659a59574, type: 3}
   m_Name: CompleteOrdersWinCondition
   m_EditorClassIdentifier: 
-  ordersToComplete: 3
+  ordersToComplete: 10

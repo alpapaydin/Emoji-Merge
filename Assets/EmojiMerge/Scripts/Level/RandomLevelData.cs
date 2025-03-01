@@ -13,12 +13,24 @@ public class RandomLevelData : ScriptableObject
     public Vector2Int MaxGridSize;
 
     [Header("Items Config")]
+    [Header("Forced Spawn Items")]
+    public ItemLevelCount[] forcedSpawnItems;
+
+    [Header("Producer Config")]
     public ProducerItemProperties[] ProducerProperties;
     public float ProducerProbability;
+    public int MinProducerCount;
+    public int MaxProducerCount;
+
+    [Header("Produced Item Config")]
     public ProducedItemProperties[] ProducedItemProperties;
     public float ProducedItemProbability;
+
+    [Header("Chest Config")]
     public ChestItemProperties[] ChestProperties;
     public float ChestProbability;
+    public int MinChestCount;
+    public int MaxChestCount;
 
     [Header("Orders Config")]
     public OrderData[] possibleOrders;
