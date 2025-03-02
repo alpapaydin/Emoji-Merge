@@ -8,6 +8,7 @@ public class StatsUI : MonoBehaviour
     [SerializeField] private float animationSpeed = 50f;
     
     private Label goldLabel;
+    private Label levelProgress;
     private ProgressBar energyProgress;
     private VisualElement energyTitle;
     private VisualElement energyWarning;
@@ -35,6 +36,7 @@ public class StatsUI : MonoBehaviour
         energyProgress = root.Q<ProgressBar>("EnergyProgress");
         energyTitle = energyProgress?.Q<VisualElement>("unity-title");
         energyWarning = root.Q<VisualElement>("EnergyWarning");
+        levelProgress = root.Q<Label>("LevelProgress");
         
         if (goldLabel == null || energyProgress == null)
         {
@@ -56,6 +58,11 @@ public class StatsUI : MonoBehaviour
             energyTitle.style.scale = normalScale;
             energyTitle.style.color = normalColor;
         }
+    }
+
+    public void UpdateLevelProgress(int current, int total)
+    {
+        levelProgress.text = $"{current} / {total}";
     }
 
     public void UpdateGold(int value)

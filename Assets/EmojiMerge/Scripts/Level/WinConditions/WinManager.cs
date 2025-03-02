@@ -5,87 +5,69 @@ using UnityEngine;
 public class WinManager : MonoBehaviour
 {
     private BaseWinConditionData winCondition;
-    private int goldEarned = 0;
-    private int ordersCompleted = 0;
-    private int cellsUnblocked = 0;
-
+    private WinProgressData progressData = new WinProgressData();
+    
     public void InitializeWinCondition(RandomLevelData levelData)
     {
         winCondition = levelData.winCondition;
+        
+        progressData = new WinProgressData();
+        
+        if (winCondition is UnblockCellsWincondition unblockCellsWinCondition)
+        {
+            unblockCellsWinCondition.CalculateDynamicCellCount(
+                GridManager.Instance.GridSize, 
+                levelData.unblockCenter
+            );
+        }
+        
         GameManager.Instance.OnGoldEarned += OnGoldEarned;
         OrderManager.Instance.OnOrderCompleted += OnOrderCompleted;
         GridManager.Instance.OnCellUnblocked += OnCellUnblocked;
         
-        InitializeSpecificWinCondition(levelData);
+        UpdateLevelProgressUI();
+        
+        UIManager.Instance?.WinCondition?.ShowWinCondition(winCondition);
     }
 
     private void OnGoldEarned(int amount)
     {
-        goldEarned += amount;
+        progressData.goldEarned += amount;
         CheckWinCondition();
     }
 
     private void OnOrderCompleted(Order order)
     {
-        ordersCompleted++;
+        progressData.ordersCompleted++;
         CheckWinCondition();
     }
 
     private void OnCellUnblocked(Vector2Int position)
     {
-        cellsUnblocked++;
+        progressData.cellsUnblocked++;
         CheckWinCondition();
     }
-
-    private void InitializeSpecificWinCondition(RandomLevelData levelData)
-    {
-        winCondition = levelData.winCondition;
-        if (winCondition is GetGoldWinCondition goldWinCondition)
-        {
-            goldEarned = 0;
-        }
-        else if (winCondition is CompleteOrdersWinCondition ordersWinCondition)
-        {
-            ordersCompleted = 0;
-        }
-        else if (winCondition is UnblockCellsWincondition unblockCellsWinCondition)
-        {
-            cellsUnblocked = 0;
-            if (unblockCellsWinCondition.cellsToUnblock == 0)
-            {
-                unblockCellsWinCondition.cellsToUnblock = GridManager.Instance.GridSize.x * GridManager.Instance.GridSize.y - levelData.unblockCenter.x * levelData.unblockCenter.y;
-                print(GridManager.Instance.GridSize);
-            }
-        }
-    }
-
+    
     private void CheckWinCondition()
     {
-        if (winCondition != null)
+        if (winCondition == null) return;
+
+        if (winCondition.IsCompleted(progressData))
         {
-            if (winCondition is GetGoldWinCondition goldWinCondition)
-            {
-                if (goldEarned >= goldWinCondition.goldNeeded)
-                {
-                    OnWin();
-                }
-            }
-            else if (winCondition is CompleteOrdersWinCondition ordersWinCondition)
-            {
-                if (ordersCompleted >= ordersWinCondition.ordersToComplete)
-                {
-                    OnWin();
-                }
-            }
-            else if (winCondition is UnblockCellsWincondition unblockCellsWinCondition)
-            {
-                if (cellsUnblocked >= unblockCellsWinCondition.cellsToUnblock)
-                {
-                    print(unblockCellsWinCondition.cellsToUnblock);
-                    OnWin();
-                }
-            }
+            OnWin();
         }
+        
+        UpdateLevelProgressUI();
+    }
+    
+    private void UpdateLevelProgressUI()
+    {
+        if (winCondition == null) return;
+        
+        int current = winCondition.GetCurrentProgress(progressData);
+        int required = winCondition.GetRequiredProgress();
+        
+        UIManager.Instance.Stats.UpdateLevelProgress(current, required);
     }
 
     private void OnWin()
@@ -93,6 +75,7 @@ public class WinManager : MonoBehaviour
         GameManager.Instance.OnGoldEarned -= OnGoldEarned;
         OrderManager.Instance.OnOrderCompleted -= OnOrderCompleted;
         GridManager.Instance.OnCellUnblocked -= OnCellUnblocked;
+        
         GameManager.Instance.WinGame();
     }
 }

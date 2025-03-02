@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2553cf0f1046f6489bed8cd8c70af90, type: 3}
   m_Name: LevelClearBoard
   m_EditorClassIdentifier: 
-  winCondition: {fileID: 11400000, guid: 4287a74c1b6925b40895b8d5c87d5e2a, type: 2}
+  winCondition: {fileID: 11400000, guid: 6660a5234fc70d14896a8b995e0b10c5, type: 2}
   MinGridSize: {x: 5, y: 8}
   MaxGridSize: {x: 8, y: 10}
   blockCells: 1

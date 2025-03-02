@@ -10,6 +10,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private WinConditionUI winCondition;
     [SerializeField] private WinLosePopup winPopup;
 
+
+    public StatsUI Stats => stats;
     public WinLosePopup WinPopup => winPopup;
     public ItemDetailsUI ItemDetails => itemDetails;
     public WinConditionUI WinCondition => winCondition;

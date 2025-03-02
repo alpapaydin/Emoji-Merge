@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-
 public class WinConditionUI : MonoBehaviour
 {
     [SerializeField] private UIDocument winConditionDocument;
@@ -11,6 +10,7 @@ public class WinConditionUI : MonoBehaviour
     private VisualElement background;
     private Label winConditionText;
     private VisualElement popupBox;
+    private BaseWinConditionData currentWinCondition;
 
     private void Awake()
     {
@@ -21,18 +21,13 @@ public class WinConditionUI : MonoBehaviour
 
     public void ShowWinCondition(BaseWinConditionData winCondition)
     {
-        if (winCondition is GetGoldWinCondition goldWinCondition)
-        {
-            ShowWinPopup($"Get {goldWinCondition.goldNeeded} gold to win!");
-        }
-        else if (winCondition is CompleteOrdersWinCondition ordersWinCondition)
-        {
-            ShowWinPopup($"Complete {ordersWinCondition.ordersToComplete} orders to win!");
-        }
-        else if (winCondition is UnblockCellsWincondition unblockCellsWinCondition)
-        {
-            ShowWinPopup($"Unblock {unblockCellsWinCondition.cellsToUnblock} cells to win!");
-        }
+        if (winCondition == null) return;
+        
+        currentWinCondition = winCondition;
+        
+        string displayText = winCondition.GetWinConditionText();
+        
+        ShowWinPopup(displayText);
     }
 
     private void ShowWinPopup(string text)

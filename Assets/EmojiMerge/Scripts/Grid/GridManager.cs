@@ -10,7 +10,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private GameObject cellPrefab;
     [Header("Grid Settings")]
     [SerializeField] private Grid grid;
-    [SerializeField] private Vector2Int gridSize = new Vector2Int(9, 9);
+    [SerializeField] private Vector2Int gridSize;
     [SerializeField] private GridStyling gridStyling;
     [SerializeField] private ItemManager itemManager;
     [SerializeField] private Vector4 gridMargins = new Vector4(0.1f, 0.1f, 0.1f, 0.1f);
