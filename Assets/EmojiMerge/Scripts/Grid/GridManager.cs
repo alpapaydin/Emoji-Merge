@@ -10,7 +10,6 @@ public class GridManager : MonoBehaviour
     [SerializeField] private GameObject cellPrefab;
     [Header("Grid Settings")]
     [SerializeField] private Grid grid;
-    [SerializeField] private Vector2Int gridSize;
     [SerializeField] private GridStyling gridStyling;
     [SerializeField] private ItemManager itemManager;
     [SerializeField] private Vector4 gridMargins = new Vector4(0.1f, 0.1f, 0.1f, 0.1f);
@@ -18,7 +17,8 @@ public class GridManager : MonoBehaviour
     
     private InputManager inputManager;
     private RandomLevelData levelData;
-    
+    private Vector2Int gridSize;
+
     public Vector2 GridScaleMultiplier {get; private set;} = new Vector2(1f, 1f);
     public Dictionary<Vector2Int, Cell> Cells = new Dictionary<Vector2Int, Cell>();
     public InputManager Inputs => inputManager;
@@ -139,8 +139,8 @@ public class GridManager : MonoBehaviour
     private void CheckCellDragStart(Vector2Int position)
     {
         if (!CanInteractWithCell(position)) return;
-        
         var item = GetItemAtCell(position);
+        if (item == null || !item.IsReadyToMerge) return;
         item?.OnDragStart();
     }
 
