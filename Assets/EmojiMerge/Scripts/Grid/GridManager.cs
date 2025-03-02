@@ -27,6 +27,7 @@ public class GridManager : MonoBehaviour
     public Vector2Int GridSize => gridSize;
     public event Action OnGridInitialized;
     public event Action OnGridResized;
+    public event Action<Vector2Int> OnCellUnblocked;
 
     private void Awake()
     {
@@ -104,7 +105,7 @@ public class GridManager : MonoBehaviour
 
     private void SpawnGridItems()
     {
-        LevelGenerator.GenerateRandomLevel(levelData, gridSize, itemManager);
+        LevelGenerator.GenerateRandomLevel(levelData, itemManager, this);
     }
 
 
@@ -162,6 +163,19 @@ public class GridManager : MonoBehaviour
     public bool IsCellBlocked(Vector2Int position)
     {
         return Cells.TryGetValue(position, out var cell) && cell.IsCellBlocked;
+    }
+
+    public void BlockCell(Vector2Int position)
+    {
+        if (Cells.TryGetValue(position, out var cell))
+        {
+            cell.BlockCell();
+        }
+    }
+
+    public void CellUnblocked(Vector2Int position)
+    {
+        OnCellUnblocked?.Invoke(position);
     }
 
     public Cell GetCell(Vector2Int position)

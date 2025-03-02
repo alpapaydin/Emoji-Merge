@@ -30,7 +30,7 @@ MonoBehaviour:
       level: 1
       count: 1
     canSpawnItems: 0
-  - rechargeTime: 5
+  - rechargeTime: 60
     itemCapacities:
     - itemDefinition: {fileID: 11400000, guid: 17c316ad05ababc4ebd29325221998ab, type: 2}
       level: 2
@@ -39,7 +39,7 @@ MonoBehaviour:
       level: 2
       count: 2
     canSpawnItems: 0
-  - rechargeTime: 5
+  - rechargeTime: 60
     itemCapacities:
     - itemDefinition: {fileID: 11400000, guid: 17c316ad05ababc4ebd29325221998ab, type: 2}
       level: 3

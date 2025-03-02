@@ -890,6 +890,12 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: a3e54bfde3d26ef408cf416bcf36cb54, type: 3}
     volume: 0.6
     pitch: 1
+    loop: 1
+    source: {fileID: 0}
+  - name: cellUnblocked
+    clip: {fileID: 8300000, guid: 26987d425f3273145943e87590806695, type: 3}
+    volume: 0.6
+    pitch: 1
     loop: 0
     source: {fileID: 0}
   poolSize: 10
@@ -948,6 +954,7 @@ MonoBehaviour:
   allLevels:
   - {fileID: 11400000, guid: 83b67a7cd69c8db49847a369dc675a4f, type: 2}
   - {fileID: 11400000, guid: bf3996c53f0d8c749990dfd2e4bd9ecd, type: 2}
+  - {fileID: 11400000, guid: 3d681b488c81c4b4cb74da9943c010a4, type: 2}
 --- !u!1 &1980337272
 GameObject:
   m_ObjectHideFlags: 0

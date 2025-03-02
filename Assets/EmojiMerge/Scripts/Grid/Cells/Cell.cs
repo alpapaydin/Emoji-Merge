@@ -24,10 +24,6 @@ public class Cell : MonoBehaviour
     {
         gridPosition = position;
         ApplyStyling();
-        if (gridPosition.y < 3)
-        {
-            BlockCell();
-        }
     }
 
     private void ApplyStyling()
@@ -74,9 +70,11 @@ public class Cell : MonoBehaviour
         cellBlocker.SetActive(false);
         isCellBlocked = false;
         ParticleManager.Instance.SpawnParticle("cellUnblocked", transform.position);
+        SoundManager.Instance.PlaySound("cellUnblocked");
         if (currentItem != null)
         {
             currentItem.ItemUnblocked();
         }
+        GridManager.Instance.CellUnblocked(gridPosition);
     }
 }

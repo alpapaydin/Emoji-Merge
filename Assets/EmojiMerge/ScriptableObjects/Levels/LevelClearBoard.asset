@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2553cf0f1046f6489bed8cd8c70af90, type: 3}
+  m_Name: LevelClearBoard
+  m_EditorClassIdentifier: 
+  winCondition: {fileID: 11400000, guid: 4287a74c1b6925b40895b8d5c87d5e2a, type: 2}
+  MinGridSize: {x: 5, y: 8}
+  MaxGridSize: {x: 8, y: 10}
+  blockCells: 1
+  unblockCenter: {x: 2, y: 4}
+  forcedSpawnItems:
+  - itemDefinition: {fileID: 11400000, guid: 0943822dcd192ef4c9a2d86ce15705fa, type: 2}
+    level: 5
+    count: 1
+  ProducerProperties:
+  - {fileID: 11400000, guid: 0943822dcd192ef4c9a2d86ce15705fa, type: 2}
+  ProducerProbability: 1
+  MinProducerCount: 1
+  MaxProducerCount: 4
+  ProducedItemProperties:
+  - {fileID: 11400000, guid: 8e4972eca33809545951f541ecf4bec9, type: 2}
+  ProducedItemProbability: 10
+  ChestProperties:
+  - {fileID: 11400000, guid: 60b93c3121903dd49a2c99e0d9d18b3f, type: 2}
+  ChestProbability: 1
+  MinChestCount: 1
+  MaxChestCount: 4
+  possibleOrders:
+  - {fileID: 11400000, guid: 5bfaa8375ed7bdf47889a0919796b2ae, type: 2}
+  - {fileID: 11400000, guid: c8a8b6e17ea3a9b4a84bb8edb202f647, type: 2}
+  - {fileID: 11400000, guid: 1773eb02b8d93254c9740ca49dddcaaf, type: 2}
+  - {fileID: 11400000, guid: 03164b7331fe3f044878db6ade0287fb, type: 2}
+  - {fileID: 11400000, guid: 06fb44fbdfedf654bb9649425f85f398, type: 2}
+  - {fileID: 11400000, guid: e17c5468d5dd5e545873b0c5de537cba, type: 2}
+  - {fileID: 11400000, guid: 2042a2f1b75a4924c92f5d0b0e875b7c, type: 2}
+  maxOrders: 3
+  orderCooldown: 5

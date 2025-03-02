@@ -12,6 +12,9 @@ public class RandomLevelData : ScriptableObject
     public Vector2Int MinGridSize;
     public Vector2Int MaxGridSize;
 
+    public bool blockCells;
+    public Vector2Int unblockCenter;
+
     [Header("Items Config")]
     [Header("Forced Spawn Items")]
     public ItemLevelCount[] forcedSpawnItems;

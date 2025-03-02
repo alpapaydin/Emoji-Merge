@@ -12,56 +12,95 @@ public static class LevelGenerator
         );
     }
 
-    public static void GenerateRandomLevel(RandomLevelData randomLevelData, Vector2Int gridSize, ItemManager itemManager)
+    public static void GenerateRandomLevel(RandomLevelData randomLevelData, ItemManager itemManager, GridManager gridManager)
     {
-        int totalCells = gridSize.x * gridSize.y;
+        Vector2Int gridSize = gridManager.GridSize;
+        
+        TryBlockCells(randomLevelData, gridManager);
         
         int producerCount = 0;
         int chestCount = 0;
         int producedItemCount = 0;
         
-        List<Vector2Int> availablePositions = new List<Vector2Int>();
+        List<Vector2Int> availablePositions = GetPrioritizedAvailablePositions(gridSize, gridManager);
+        
+        PlaceForcedItems(randomLevelData, availablePositions, itemManager, ref producerCount, ref chestCount, ref producedItemCount);
+        
+        PlaceMinimumRequiredProducers(randomLevelData, availablePositions, itemManager, ref producerCount);
+        
+        PlaceMinimumRequiredChests(randomLevelData, availablePositions, itemManager, ref chestCount);
+        
+        FillRemainingCellsRandomly(randomLevelData, availablePositions, itemManager, ref producerCount, ref chestCount, ref producedItemCount);
+    }
+    
+    private static List<Vector2Int> GetPrioritizedAvailablePositions(Vector2Int gridSize, GridManager gridManager)
+    {
+        List<Vector2Int> unblockPositions = new List<Vector2Int>();
+        List<Vector2Int> blockedPositions = new List<Vector2Int>();
+        
         for (int x = 0; x < gridSize.x; x++)
         {
             for (int y = 0; y < gridSize.y; y++)
             {
-                availablePositions.Add(new Vector2Int(x, y));
-            }
-        }
-        
-        ShuffleList(availablePositions);
-        
-        if (randomLevelData.forcedSpawnItems != null && randomLevelData.forcedSpawnItems.Length > 0)
-        {
-            foreach (ItemLevelCount forcedItem in randomLevelData.forcedSpawnItems)
-            {
-                if (forcedItem.itemDefinition == null || forcedItem.count <= 0 || availablePositions.Count <= 0)
-                    continue;
-
-                for (int i = 0; i < forcedItem.count && availablePositions.Count > 0; i++)
+                Vector2Int pos = new Vector2Int(x, y);
+                if (gridManager.IsCellBlocked(pos))
                 {
-                    Vector2Int pos = availablePositions[0];
-                    availablePositions.RemoveAt(0);
-                    
-                    if (forcedItem.itemDefinition is ProducerItemProperties producerProperties)
-                    {
-                        itemManager.CreateProducerItem(pos, forcedItem.level, producerProperties);
-                        producerCount++;
-                    }
-                    else if (forcedItem.itemDefinition is ChestItemProperties chestProperties)
-                    {
-                        itemManager.CreateChestItem(pos, forcedItem.level, chestProperties);
-                        chestCount++;
-                    }
-                    else if (forcedItem.itemDefinition is ProducedItemProperties producedProperties)
-                    {
-                        itemManager.CreateProducedItem(pos, forcedItem.level, producedProperties);
-                        producedItemCount++;
-                    }
+                    blockedPositions.Add(pos);
+                }
+                else
+                {
+                    unblockPositions.Add(pos);
                 }
             }
         }
         
+        ShuffleList(unblockPositions);
+        ShuffleList(blockedPositions);
+        
+        List<Vector2Int> availablePositions = new List<Vector2Int>();
+        availablePositions.AddRange(unblockPositions);
+        availablePositions.AddRange(blockedPositions);
+        
+        return availablePositions;
+    }
+    
+    private static void PlaceForcedItems(RandomLevelData randomLevelData, List<Vector2Int> availablePositions, ItemManager itemManager, 
+                                        ref int producerCount, ref int chestCount, ref int producedItemCount)
+    {
+        if (randomLevelData.forcedSpawnItems == null || randomLevelData.forcedSpawnItems.Length <= 0)
+            return;
+            
+        foreach (ItemLevelCount forcedItem in randomLevelData.forcedSpawnItems)
+        {
+            if (forcedItem.itemDefinition == null || forcedItem.count <= 0 || availablePositions.Count <= 0)
+                continue;
+
+            for (int i = 0; i < forcedItem.count && availablePositions.Count > 0; i++)
+            {
+                Vector2Int pos = availablePositions[0];
+                availablePositions.RemoveAt(0);
+                
+                if (forcedItem.itemDefinition is ProducerItemProperties producerProperties)
+                {
+                    itemManager.CreateProducerItem(pos, forcedItem.level, producerProperties);
+                    producerCount++;
+                }
+                else if (forcedItem.itemDefinition is ChestItemProperties chestProperties)
+                {
+                    itemManager.CreateChestItem(pos, forcedItem.level, chestProperties);
+                    chestCount++;
+                }
+                else if (forcedItem.itemDefinition is ProducedItemProperties producedProperties)
+                {
+                    itemManager.CreateProducedItem(pos, forcedItem.level, producedProperties);
+                    producedItemCount++;
+                }
+            }
+        }
+    }
+    
+    private static void PlaceMinimumRequiredProducers(RandomLevelData randomLevelData, List<Vector2Int> availablePositions, ItemManager itemManager, ref int producerCount)
+    {
         for (int i = 0; i < randomLevelData.MinProducerCount && availablePositions.Count > 0; i++)
         {
             if (producerCount >= randomLevelData.MinProducerCount)
@@ -75,7 +114,10 @@ public static class LevelGenerator
             itemManager.CreateProducerItem(pos, level, properties);
             producerCount++;
         }
-        
+    }
+    
+    private static void PlaceMinimumRequiredChests(RandomLevelData randomLevelData, List<Vector2Int> availablePositions, ItemManager itemManager, ref int chestCount)
+    {
         for (int i = 0; i < randomLevelData.MinChestCount && availablePositions.Count > 0; i++)
         {
             if (chestCount >= randomLevelData.MinChestCount)
@@ -89,52 +131,90 @@ public static class LevelGenerator
             itemManager.CreateChestItem(pos, level, properties);
             chestCount++;
         }
-        
+    }
+    
+    private static void FillRemainingCellsRandomly(RandomLevelData randomLevelData, List<Vector2Int> availablePositions, ItemManager itemManager, 
+                                                ref int producerCount, ref int chestCount, ref int producedItemCount)
+    {
         while (availablePositions.Count > 0)
         {
             Vector2Int pos = availablePositions[0];
             availablePositions.RemoveAt(0);
             
-            float totalProbability = randomLevelData.ProducerProbability + 
-                                    randomLevelData.ProducedItemProbability + 
-                                    randomLevelData.ChestProbability;
-            
+            float totalProbability = CalculateTotalProbability(randomLevelData, producerCount, chestCount);
             if (totalProbability <= 0) continue;
             
-            float producerProb = (producerCount >= randomLevelData.MaxProducerCount) ? 0 : randomLevelData.ProducerProbability;
-            float chestProb = (chestCount >= randomLevelData.MaxChestCount) ? 0 : randomLevelData.ChestProbability;
-            float producedItemProb = randomLevelData.ProducedItemProbability;
+            ItemType itemTypeToSpawn = DetermineItemTypeToSpawn(randomLevelData, producerCount, chestCount, totalProbability);
             
-            totalProbability = producerProb + chestProb + producedItemProb;
-            
-            if (totalProbability <= 0) continue;
-            
-            float normalizedProducerProb = producerProb / totalProbability;
-            float normalizedChestProb = chestProb / totalProbability;
-            
-            float randomValue = Random.value;
-            
-            if (randomValue < normalizedProducerProb && producerCount < randomLevelData.MaxProducerCount)
-            {
-                ProducerItemProperties properties = randomLevelData.ProducerProperties[Random.Range(0, randomLevelData.ProducerProperties.Length)];
-                int level = Random.Range(1, properties.maxLevel);
-                itemManager.CreateProducerItem(pos, level, properties);
+            SpawnRandomItem(itemTypeToSpawn, randomLevelData, pos, itemManager, ref producerCount, ref chestCount, ref producedItemCount);
+        }
+    }
+    
+    private static float CalculateTotalProbability(RandomLevelData randomLevelData, int producerCount, int chestCount)
+    {
+        float producerProb = (producerCount >= randomLevelData.MaxProducerCount) ? 0 : randomLevelData.ProducerProbability;
+        float chestProb = (chestCount >= randomLevelData.MaxChestCount) ? 0 : randomLevelData.ChestProbability;
+        float producedItemProb = randomLevelData.ProducedItemProbability;
+        
+        return producerProb + chestProb + producedItemProb;
+    }
+    
+    private enum ItemType
+    {
+        Producer,
+        Chest,
+        ProducedItem
+    }
+    
+    private static ItemType DetermineItemTypeToSpawn(RandomLevelData randomLevelData, int producerCount, int chestCount, float totalProbability)
+    {
+        float producerProb = (producerCount >= randomLevelData.MaxProducerCount) ? 0 : randomLevelData.ProducerProbability;
+        float chestProb = (chestCount >= randomLevelData.MaxChestCount) ? 0 : randomLevelData.ChestProbability;
+        
+        float normalizedProducerProb = producerProb / totalProbability;
+        float normalizedChestProb = chestProb / totalProbability;
+        
+        float randomValue = Random.value;
+        
+        if (randomValue < normalizedProducerProb && producerCount < randomLevelData.MaxProducerCount)
+        {
+            return ItemType.Producer;
+        }
+        else if (randomValue < normalizedProducerProb + normalizedChestProb && chestCount < randomLevelData.MaxChestCount)
+        {
+            return ItemType.Chest;
+        }
+        else
+        {
+            return ItemType.ProducedItem;
+        }
+    }
+    
+    private static void SpawnRandomItem(ItemType itemType, RandomLevelData randomLevelData, Vector2Int position, ItemManager itemManager, 
+                                      ref int producerCount, ref int chestCount, ref int producedItemCount)
+    {
+        switch (itemType)
+        {
+            case ItemType.Producer:
+                ProducerItemProperties producerProps = randomLevelData.ProducerProperties[Random.Range(0, randomLevelData.ProducerProperties.Length)];
+                int producerLevel = Random.Range(1, producerProps.maxLevel);
+                itemManager.CreateProducerItem(position, producerLevel, producerProps);
                 producerCount++;
-            }
-            else if (randomValue < normalizedProducerProb + normalizedChestProb && chestCount < randomLevelData.MaxChestCount)
-            {
-                ChestItemProperties properties = randomLevelData.ChestProperties[Random.Range(0, randomLevelData.ChestProperties.Length)];
-                int level = Random.Range(1, properties.maxLevel);
-                itemManager.CreateChestItem(pos, level, properties);
+                break;
+                
+            case ItemType.Chest:
+                ChestItemProperties chestProps = randomLevelData.ChestProperties[Random.Range(0, randomLevelData.ChestProperties.Length)];
+                int chestLevel = Random.Range(1, chestProps.maxLevel);
+                itemManager.CreateChestItem(position, chestLevel, chestProps);
                 chestCount++;
-            }
-            else
-            {
-                ProducedItemProperties properties = randomLevelData.ProducedItemProperties[Random.Range(0, randomLevelData.ProducedItemProperties.Length)];
-                int level = Random.Range(1, properties.maxLevel);
-                itemManager.CreateProducedItem(pos, level, properties);
+                break;
+                
+            case ItemType.ProducedItem:
+                ProducedItemProperties producedProps = randomLevelData.ProducedItemProperties[Random.Range(0, randomLevelData.ProducedItemProperties.Length)];
+                int producedLevel = Random.Range(1, producedProps.maxLevel);
+                itemManager.CreateProducedItem(position, producedLevel, producedProps);
                 producedItemCount++;
-            }
+                break;
         }
     }
     
@@ -147,6 +227,35 @@ public static class LevelGenerator
             T temp = list[i];
             list[i] = list[r];
             list[r] = temp;
+        }
+    }
+
+    private static void TryBlockCells(RandomLevelData randomLevelData, GridManager gridManager)
+    {
+        if (!randomLevelData.blockCells)
+            return;
+        
+        int centerX = gridManager.GridSize.x / 2;
+        int centerY = gridManager.GridSize.y / 2;
+        
+        int halfWidthX = randomLevelData.unblockCenter.x / 2;
+        int halfHeightY = randomLevelData.unblockCenter.y / 2;
+        
+        int startX = centerX - halfWidthX;
+        int endX = centerX + halfWidthX + (randomLevelData.unblockCenter.x % 2);
+        int startY = centerY - halfHeightY;
+        int endY = centerY + halfHeightY + (randomLevelData.unblockCenter.y % 2);
+        
+        for (int x = 0; x < gridManager.GridSize.x; x++)
+        {
+            for (int y = 0; y < gridManager.GridSize.y; y++)
+            {
+                if (randomLevelData.unblockCenter.x <= 0 || randomLevelData.unblockCenter.y <= 0 || 
+                    x < startX || x >= endX || y < startY || y >= endY)
+                {
+                    gridManager.BlockCell(new Vector2Int(x, y));
+                }
+            }
         }
     }
 }

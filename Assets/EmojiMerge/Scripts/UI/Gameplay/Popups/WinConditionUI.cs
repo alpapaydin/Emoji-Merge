@@ -29,6 +29,10 @@ public class WinConditionUI : MonoBehaviour
         {
             ShowWinPopup($"Complete {ordersWinCondition.ordersToComplete} orders to win!");
         }
+        else if (winCondition is UnblockCellsWincondition unblockCellsWinCondition)
+        {
+            ShowWinPopup($"Unblock {unblockCellsWinCondition.cellsToUnblock} cells to win!");
+        }
     }
 
     private void ShowWinPopup(string text)
